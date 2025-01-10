@@ -1,0 +1,9 @@
+package com.example.demo.domain.credential.presentation.dto.request;
+
+import lombok.Getter;
+
+@Getter
+public class TokenRefreshRequest {
+
+    private String refreshToken;
+}

@@ -1,0 +1,44 @@
+spring:
+  config:
+    import: "optional:configserver:"
+  datasource:
+    url: jdbc:mysql://localhost:3306/degang
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1234
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
+
+logging.level:
+  org.hibernate.SQL: debug
+
+oauth:
+  kakao:
+    app-id: ${KAKAO_APP_ID}
+    client-id: ${CLIENT_ID}
+    redirect-url: ${REDIRECT_URL}
+    base-url: ${BASE_URL}
+    admin-key: ${ADMIN_KEY}
+auth:
+  jwt:
+    secretKey: ${JWT_SECRET_KEY}
+    accessExp: ${JWT_ACCESS_EXP}
+    refreshExp: ${JWT_REFRESH_EXP}
+    header: ${JWT_HEADER}
+    prefix: ${JWT_PREFIX}
+
