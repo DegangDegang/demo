@@ -19,9 +19,11 @@ public enum ErrorCode {
 
     /* 403 UNAUTHORIZED : 인증되지 않은 사용자 */
     REGISTER_EXPIRED_TOKEN(HttpStatus.FORBIDDEN.value(),"refreshToken expired."),
+    POST_PERMISSION(403, "게시글에 대한 수정, 삭제 권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
+    POST_NOT_FOUND(404, "게시글을 찾을 수 없습니다."),
     BAD_FILE_EXTENSION(404,  "FILE extension error"),
     FILE_EMPTY(404,  "FILE empty"),
     FILE_UPLOAD_FAIL(404,  "FILE upload fail"),
