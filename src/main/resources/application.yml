@@ -42,3 +42,10 @@ auth:
     header: ${JWT_HEADER}
     prefix: ${JWT_PREFIX}
 
+aws:
+  access-key: sd
+  secret-key: sd
+  s3:
+    bucket: sd
+    base-url: sd
+

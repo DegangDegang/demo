@@ -54,6 +54,12 @@ dependencies {
 
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	//s3
+	implementation 'com.amazonaws:aws-java-sdk-s3control:1.12.364'
+
+	//implementation 'software.amazon.awssdk:s3:2.21.5'
+
 }
 
 dependencyManagement {
