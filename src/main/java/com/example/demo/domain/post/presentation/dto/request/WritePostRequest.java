@@ -8,6 +8,4 @@ import lombok.Setter;
 public class WritePostRequest {
     private String title;
     private String content;
-
-
 }

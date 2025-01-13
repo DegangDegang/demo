@@ -26,13 +26,13 @@ public class PostController {
     }
 
     @PostMapping
-    public PostDetailResponse writePost(WritePostRequest writePostRequest) {
+    public PostDetailResponse writePost(@RequestBody WritePostRequest writePostRequest) {
         User user = userUtils.getUserFromSecurityContext();
         return postService.writePost(writePostRequest, user);
     }
 
     @PatchMapping("/{postId}")
-    public PostDetailResponse updatePost(UpdatePostRequest updatePostRequest, Long postId) {
+    public PostDetailResponse updatePost(@RequestBody UpdatePostRequest updatePostRequest, Long postId) {
         User user = userUtils.getUserFromSecurityContext();
         return postService.updatePost(updatePostRequest, postId, user);
     }
