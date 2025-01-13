@@ -10,12 +10,14 @@ import com.example.demo.domain.user.domain.User;
 import com.example.demo.global.exception.post.PostNotFoundException;
 import com.example.demo.global.exception.post.PostPermissionException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -68,7 +70,7 @@ public class PostServiceImpl implements PostService {
     private Post validatePostOwnership(Long postId, User user) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
-        if (!post.getUser().equals(user)) {
+        if (!post.getUser().getId().equals(user.getId())) {
             throw PostPermissionException.EXCEPTION;
         }
         return post;
