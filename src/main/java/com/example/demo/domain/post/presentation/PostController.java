@@ -21,7 +21,8 @@ public class PostController {
     private final UserUtils userUtils;
 
     @GetMapping("/{postId}")
-    public PostDetailResponse getPost(Long postId) {
+    public PostDetailResponse getPost(@PathVariable Long postId) {
+        System.out.println("postId: " + postId);
         return postService.getPostById(postId);
     }
 
@@ -32,13 +33,13 @@ public class PostController {
     }
 
     @PatchMapping("/{postId}")
-    public PostDetailResponse updatePost(@RequestBody UpdatePostRequest updatePostRequest, Long postId) {
+    public PostDetailResponse updatePost(@RequestBody UpdatePostRequest updatePostRequest, @PathVariable Long postId) {
         User user = userUtils.getUserFromSecurityContext();
         return postService.updatePost(updatePostRequest, postId, user);
     }
 
     @DeleteMapping("/{postId}")
-    public void deletePost(Long postId) {
+    public void deletePost(@PathVariable Long postId) {
         User user = userUtils.getUserFromSecurityContext();
         postService.deletePost(postId, user);
     }
