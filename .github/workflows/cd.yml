@@ -75,4 +75,4 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/degang:${{ steps.short_sha.outputs.sha_short }}
             docker tag ${{ secrets.DOCKER_USERNAME }}/degang:${{ steps.short_sha.outputs.sha_short }} test
             docker rm -f degang || true
-            docker run -d --name luck-lottery -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/degang:${{ steps.short_sha.outputs.sha_short }}
+            docker run -d --name degang -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/degang:${{ steps.short_sha.outputs.sha_short }}
