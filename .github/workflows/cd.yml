@@ -58,7 +58,7 @@ jobs:
         env:
           DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_IMAGE_TAG: bookworm_project:${{ steps.short_sha.outputs.sha_short }}
+          DOCKER_IMAGE_TAG: novel-hub:${{ steps.short_sha.outputs.sha_short }}
         run: |
           echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
           docker build -t $DOCKER_IMAGE_TAG .
@@ -72,7 +72,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/bookworm_project:${{ steps.short_sha.outputs.sha_short }}
-            docker tag ${{ secrets.DOCKER_USERNAME }}/bookworm_project:${{ steps.short_sha.outputs.sha_short }} test
-            docker rm -f bookworm_project || true
-            docker run -d --name bookworm_project -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/bookworm_project:${{ steps.short_sha.outputs.sha_short }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/novel-hub:${{ steps.short_sha.outputs.sha_short }}
+            docker tag ${{ secrets.DOCKER_USERNAME }}/novel-hub:${{ steps.short_sha.outputs.sha_short }} test
+            docker rm -f novel-hub || true
+            docker run -d --name novel-hub -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/novel-hub:${{ steps.short_sha.outputs.sha_short }}
