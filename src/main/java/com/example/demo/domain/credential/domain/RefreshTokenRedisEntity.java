@@ -15,10 +15,10 @@ public class RefreshTokenRedisEntity {
     private String id;
 
     @Indexed
-    private String refreshToken;
+    private final String refreshToken;
 
     @TimeToLive
-    private Long refreshTokenTtl;
+    private final Long refreshTokenTtl;
 
     @Builder
     public RefreshTokenRedisEntity(String id, String refreshToken, Long refreshTokenTtl) {
