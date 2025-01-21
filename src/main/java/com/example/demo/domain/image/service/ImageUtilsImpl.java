@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class ImageService implements ImageUtils{
+public class ImageUtilsImpl implements ImageUtils{
 
     @Value("${aws.s3.bucket}")
     private String bucket;
@@ -33,12 +33,13 @@ public class ImageService implements ImageUtils{
 
     private final AmazonS3 amazonS3;
 
+    @Override
     public UploadImageResponse uploadImage(MultipartFile file) {
         String url = upload(file);
         return new UploadImageResponse(url);
     }
 
-    public String upload(MultipartFile file) {
+    private String upload(MultipartFile file) {
 
         if (file.isEmpty() && file.getOriginalFilename() != null){
             throw FileEmptyException.EXCEPTION;
@@ -49,6 +50,11 @@ public class ImageService implements ImageUtils{
         }
 
         String originalFilename = file.getOriginalFilename();
+
+        if (originalFilename == null) {
+            throw FileEmptyException.EXCEPTION;
+        }
+
         String ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
 
         if (!(ext.equals("jpg")
