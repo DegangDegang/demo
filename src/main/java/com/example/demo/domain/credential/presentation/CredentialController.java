@@ -19,8 +19,8 @@ public class CredentialController {
     private final CredentialService credentialService;
 
     @PostMapping("/test-login/{userId}")
-    public AccessTokenDto loginTest(@PathVariable("userId") Long userId){
-        return credentialService.login(userId);
+    public AuthTokensResponse loginTest(@PathVariable("userId") Long userId){
+        return credentialService.testLogin(userId);
     }
 
     @PostMapping("/sign-up-test")
@@ -84,7 +84,7 @@ public class CredentialController {
 
     @PostMapping("/logout")
     public void logout() {
-        credentialService.logoutUser();
+        credentialService.logout();
     }
 
     @DeleteMapping("/user")

@@ -34,13 +34,16 @@ public class CredentialService {
     private final RefreshTokenRedisEntityRepository refreshTokenRedisEntityRepository;
     private final UserUtils userUtils;
 
-    public AccessTokenDto login(Long userId){
+    public AuthTokensResponse testLogin(Long userId){
         User user = userUtils.getUserById(userId);
         String accessToken = jwtTokenProvider.generateAccessToken(userId, user.getAccountRole());
-        return new AccessTokenDto(accessToken);
+        String refreshToken = generateRefreshToken(userId);
+        return AuthTokensResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken).build();
     }
 
-    public void logoutUser() {
+    public void logout() {
         User user = userUtils.getUserFromSecurityContext();
         refreshTokenRedisEntityRepository.deleteById(user.getId().toString());
     }
@@ -154,6 +157,11 @@ public class CredentialService {
         }
 
         User user = userUtils.getUserById(userId);
+        User loginUser = userUtils.getUserFromSecurityContext();
+
+        if (user != loginUser) {
+            throw UserNotFoundException.EXCEPTION;
+        }
 
         String accessToken = jwtTokenProvider.generateAccessToken(userId, user.getAccountRole());
         String refreshToken = generateRefreshToken(userId);
