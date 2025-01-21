@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -40,7 +40,7 @@ public class SecurityConfig {
                         registry.requestMatchers("/api/v1/credentials/login2/**","/api/v1/credentials/singup2",
                                         "/api/v1/credentials/oauth/link/kakao","/api/v1/credentials/oauth/kakao","/api/v1/credentials/oauth/link/google"
                                         ,"/api/v1/credentials/oauth/google","/api/v1/credentials/oauth/valid/register","/api/v1/credentials/login"
-                                        ,"/api/v1/credentials/register","/api/v1/credentials/refresh").permitAll()
+                                        ,"/api/v1/credentials/user","/api/v1/credentials/refresh").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/v1/winning/pension/lottery/admin/save/db",
                                         "/api/v1/winning/lottery/admin/save/db").hasRole(AccountRole.ADMIN.getValue())

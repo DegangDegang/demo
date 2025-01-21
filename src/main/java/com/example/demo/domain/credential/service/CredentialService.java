@@ -24,8 +24,8 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-@Transactional
 @Slf4j
+@Transactional
 public class CredentialService {
 
     private final UserRepository userRepository;
@@ -34,20 +34,20 @@ public class CredentialService {
     private final RefreshTokenRedisEntityRepository refreshTokenRedisEntityRepository;
     private final UserUtils userUtils;
 
-    @Transactional
-    public AccessTokenDto login(Long userId){
+    public AuthTokensResponse testLogin(Long userId){
         User user = userUtils.getUserById(userId);
         String accessToken = jwtTokenProvider.generateAccessToken(userId, user.getAccountRole());
-        return new AccessTokenDto(accessToken);
+        String refreshToken = generateRefreshToken(userId);
+        return AuthTokensResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken).build();
     }
 
-    @Transactional
-    public void logoutUser() {
+    public void logout() {
         User user = userUtils.getUserFromSecurityContext();
         refreshTokenRedisEntityRepository.deleteById(user.getId().toString());
     }
 
-    @Transactional
     public void singUpTest(RegisterRequest registerRequest){
         User user =
                 User.builder()
@@ -60,13 +60,14 @@ public class CredentialService {
         userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public AfterOauthResponse getTokenToCode(OauthProvider oauthProvider, String code) {
         OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
         OauthTokenInfoDto oauthToken = oauthStrategy.getOauthToken(code);
         return new AfterOauthResponse(oauthToken.getIdToken(),oauthToken.getAccessToken());
     }
 
+    @Transactional(readOnly = true)
     public CheckRegisteredResponse getUserAvailableRegister(String token, OauthProvider oauthProvider) {
         OauthStrategy oauthstrategy = oauthFactory.getOauthstrategy(oauthProvider);
         OIDCDecodePayload oidcDecodePayload = oauthstrategy.getOIDCDecodePayload(token);
@@ -74,6 +75,7 @@ public class CredentialService {
         return new CheckRegisteredResponse(isRegistered);
     }
 
+    @Transactional(readOnly = true)
     public String getOauthLink(OauthProvider oauthProvider) {
         OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(oauthProvider);
         return oauthStrategy.getOauthLink();
@@ -108,7 +110,6 @@ public class CredentialService {
                 .build();
     }
 
-    @Transactional
     public AuthTokensResponse registerUserByOCIDToken(
             String token, RegisterRequest registerUserRequest, OauthProvider oauthProvider) {
 
@@ -156,6 +157,11 @@ public class CredentialService {
         }
 
         User user = userUtils.getUserById(userId);
+        User loginUser = userUtils.getUserFromSecurityContext();
+
+        if (user != loginUser) {
+            throw UserNotFoundException.EXCEPTION;
+        }
 
         String accessToken = jwtTokenProvider.generateAccessToken(userId, user.getAccountRole());
         String refreshToken = generateRefreshToken(userId);
@@ -179,7 +185,6 @@ public class CredentialService {
         return refreshToken;
     }
 
-    @Transactional
     public void deleteUser(String oauthAccessToken) {
         User user = userUtils.getUserFromSecurityContext();
         OauthProvider provider = OauthProvider.valueOf(user.getOauthProvider().toUpperCase());
