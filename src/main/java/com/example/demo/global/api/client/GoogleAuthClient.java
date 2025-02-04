@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-
 @FeignClient(name = "GoogleAuthClient", url = "https://www.googleapis.com/oauth2")
 public interface GoogleAuthClient {
 

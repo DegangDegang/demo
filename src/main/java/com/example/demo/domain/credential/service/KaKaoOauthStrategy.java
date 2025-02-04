@@ -1,5 +1,6 @@
 package com.example.demo.domain.credential.service;
 
+import com.example.demo.domain.credential.exception.NotNullTokenException;
 import com.example.demo.domain.credential.presentation.dto.request.UnlinkRequest;
 import com.example.demo.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import com.example.demo.global.api.client.KakaoOauthClient;
@@ -21,7 +22,7 @@ public class KaKaoOauthStrategy implements OauthStrategy {
     private final KakaoOauthClient kakaoOauthClient;
     private final OauthOIDCProvider oauthOIDCProvider;
     private final KakaoUnlinkClient kakaoUnlinkClient;
-    private static final String PREFIX = "KakaoAK ";
+    private static final String PREFIX = "Bearer ";
     private static final String TARGET_TYPE = "user_id";
     private static final String ISSUER = "https://kauth.kakao.com";
     private static final String QUERY_STRING = "/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code";
@@ -57,16 +58,16 @@ public class KaKaoOauthStrategy implements OauthStrategy {
 
     @Override
     public UserInfoToOauthDto getUserInfo(String oauthAccessToken) {
-        return null;
+        return kakaoUnlinkClient.getKakaoInfo(PREFIX + oauthAccessToken);
     }
 
     @Override
     public void unLink(UnlinkRequest unlinkRequest) {
-
-        if (unlinkRequest.getOauthId() != null) {
-            String kakaoAdminKey = oauthProperties.getKakaoAdminKey();
-            kakaoUnlinkClient.unlinkUser(PREFIX + kakaoAdminKey,TARGET_TYPE, Long.valueOf(unlinkRequest.getOauthId()));
+        if (unlinkRequest.getAccessToken() == null) {
+            throw NotNullTokenException.EXCEPTION;
         }
+
+        kakaoUnlinkClient.unlinkUser(PREFIX + unlinkRequest.getAccessToken());
 
     }
 

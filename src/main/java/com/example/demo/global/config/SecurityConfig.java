@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,8 +41,9 @@ public class SecurityConfig {
                         registry.requestMatchers("/api/v1/credentials/login2/**","/api/v1/credentials/singup2",
                                         "/api/v1/credentials/oauth/link/kakao","/api/v1/credentials/oauth/kakao","/api/v1/credentials/oauth/link/google"
                                         ,"/api/v1/credentials/oauth/google","/api/v1/credentials/oauth/valid/register","/api/v1/credentials/login"
-                                        ,"/api/v1/credentials/user","/api/v1/credentials/refresh").permitAll()
+                                        ,"/api/v1/credentials/refresh").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/api/v1/credentials").permitAll()
                                 .requestMatchers("/api/v1/winning/pension/lottery/admin/save/db",
                                         "/api/v1/winning/lottery/admin/save/db").hasRole(AccountRole.ADMIN.getValue())
                                 .anyRequest().permitAll()

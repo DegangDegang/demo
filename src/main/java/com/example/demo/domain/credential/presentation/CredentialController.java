@@ -65,7 +65,7 @@ public class CredentialController {
         return credentialService.loginUserByOCIDToken(token, oauthProvider);
     }
 
-    @PostMapping("/user")
+    @PostMapping
     public AuthTokensResponse registerUser(
             @RequestParam("idToken") String token,
             @RequestParam("provider") OauthProvider oauthProvider,
@@ -87,7 +87,7 @@ public class CredentialController {
         credentialService.logout();
     }
 
-    @DeleteMapping("/user")
+    @DeleteMapping
     public void deleteUser(@RequestParam(value = "oauth_access_token", required = false) String token) {
         credentialService.deleteUser(token);
     }
