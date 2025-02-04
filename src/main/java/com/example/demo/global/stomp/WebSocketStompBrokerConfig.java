@@ -16,8 +16,9 @@ public class WebSocketStompBrokerConfig implements WebSocketMessageBrokerConfigu
     private final StompHandler stompHandler;
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        WebSocketMessageBrokerConfigurer.super.configureMessageBroker(registry);
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/sub");
+        config.setApplicationDestinationPrefixes("/pub");
     }
 
     @Override
