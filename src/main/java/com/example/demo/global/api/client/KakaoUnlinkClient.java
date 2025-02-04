@@ -1,17 +1,17 @@
 package com.example.demo.global.api.client;
 
+import com.example.demo.global.api.dto.UserInfoToOauthDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "KakaoUnlinkClient", url = "https://kapi.kakao.com")
 public interface KakaoUnlinkClient {
 
+    @GetMapping(value ="/v1/user/access_token_info")
+    UserInfoToOauthDto getKakaoInfo(@RequestHeader("Authorization") String authorization);
+
     @PostMapping(value = "/v1/user/unlink", consumes = "application/x-www-form-urlencoded")
-    void unlinkUser(
-            @RequestHeader("Authorization") String authorization,
-            @RequestParam(name = "target_id_type", defaultValue = "user_id") String targetIdType,
-            @RequestParam("target_id") Long targetId
-    );
+    void unlinkUser(@RequestHeader("Authorization") String accessToken);
 }

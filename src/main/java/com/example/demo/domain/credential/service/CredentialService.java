@@ -181,29 +181,30 @@ public class CredentialService {
         return refreshToken;
     }
 
+    @Transactional
     public void deleteUser(String oauthAccessToken) {
         User user = userUtils.getUserFromSecurityContext();
         OauthProvider provider = OauthProvider.valueOf(user.getOauthProvider().toUpperCase());
         OauthStrategy oauthStrategy = oauthFactory.getOauthstrategy(provider);
         String userOauthId = user.getOauthId();
 
-        if(provider.equals(OauthProvider.GOOGLE)) {
-            verifyUserOauthIdWithAccessToken(oauthAccessToken, userOauthId, oauthStrategy);
-        }
+        UserInfoToOauthDto userInfo = oauthStrategy.getUserInfo(oauthAccessToken);
+
+        log.info("userInfodto={}", userInfo.getId());
+
+        verifyUserOauthIdWithAccessToken(oauthAccessToken,userOauthId,userInfo);
 
         deleteUserData(user);
 
-        UnlinkRequest unlinkRequest = createUnlinkRequest(provider, oauthAccessToken, userOauthId);
+        UnlinkRequest unlinkRequest = createUnlinkRequest(oauthAccessToken);
         oauthStrategy.unLink(unlinkRequest);
     }
 
-    private void verifyUserOauthIdWithAccessToken(String oauthAccessToken, String oauthId, OauthStrategy oauthStrategy) {
+    private void verifyUserOauthIdWithAccessToken(String oauthAccessToken, String oauthId, UserInfoToOauthDto userInfo) {
 
         if(oauthAccessToken == null) {
             throw NotNullTokenException.EXCEPTION;
         }
-
-        UserInfoToOauthDto userInfo = oauthStrategy.getUserInfo(oauthAccessToken);
 
         if (!userInfo.getId().equals(oauthId)) {
             throw UserIdMismatchException.EXCEPTION;
@@ -215,13 +216,8 @@ public class CredentialService {
         userRepository.delete(user);
     }
 
-    private UnlinkRequest createUnlinkRequest(OauthProvider provider, String oauthAccessToken, String oauthId) {
-
-        if (provider.equals(OauthProvider.GOOGLE)) {
-            return UnlinkRequest.createWithAccessToken(oauthAccessToken);
-        } else {
-            return UnlinkRequest.createWithOauthId(oauthId);
-        }
+    private UnlinkRequest createUnlinkRequest(String oauthAccessToken) {
+        return UnlinkRequest.builder().accessToken(oauthAccessToken).build();
     }
 
 }

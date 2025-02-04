@@ -1,5 +1,6 @@
 package com.example.demo.domain.credential.service;
 
+import com.example.demo.domain.credential.exception.NotNullTokenException;
 import com.example.demo.domain.credential.presentation.dto.request.UnlinkRequest;
 import com.example.demo.domain.credential.presentation.dto.response.OauthTokenInfoDto;
 import com.example.demo.global.api.client.GoogleAuthClient;
@@ -69,9 +70,10 @@ public class GoogleOauthStrategy implements OauthStrategy{
 
     @Override
     public void unLink(UnlinkRequest unlinkRequest) {
-        if (unlinkRequest.getAccessToken() != null) {
-            googleUnlinkClient.unlink(unlinkRequest.getAccessToken());
+        if (unlinkRequest.getAccessToken() == null) {
+            throw NotNullTokenException.EXCEPTION;
         }
+        googleUnlinkClient.unlink(unlinkRequest.getAccessToken());
 
     }
 
