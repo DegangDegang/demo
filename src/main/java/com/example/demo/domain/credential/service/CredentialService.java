@@ -53,8 +53,6 @@ public class CredentialService {
                 User.builder()
                         .oauthProvider(UUID.randomUUID().toString())
                         .oauthId(UUID.randomUUID().toString())
-                        .email(null)
-                        .profilePath(null)
                         .nickname(registerRequest.getNickname())
                         .build();
         userRepository.save(user);
@@ -124,8 +122,6 @@ public class CredentialService {
                 User.builder()
                         .oauthProvider(oauthProvider.getValue())
                         .oauthId(oidcDecodePayload.getSub())
-                        .email(oidcDecodePayload.getEmail())
-                        .profilePath(registerUserRequest.getProfilePath())
                         .nickname(registerUserRequest.getNickname())
                         .build();
         userRepository.save(user);

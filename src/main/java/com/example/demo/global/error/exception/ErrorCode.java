@@ -37,8 +37,11 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500,"서버 에러"),
     NO_SUCH_PUBLIC_KEY(500, " kid 값이 일치하는 데이터가 없습니다."),
     NO_SUCH_RSA_ALGORITHM(500, "RSA 암호화 알고리즘을 지원하지 않는 환경입니다."),
-    ;
+    SHORT_ESSAY_NOT_FOUND(404, "단필을 찾을 수 없습니다."),
+    UNAUTHORIZED_SHORT_ESSAY(403, "작성자가 아니므로 단필을 삭제할 수 없습니다."),
+    ALREADY_LIKED(400,"이미 단필 좋아요를 눌렀습니다." ),
+    SHORT_ESSAY_LIKE_NOT_FOUND(404, "단필 좋아요를 누르지 않았습니다.");
 
-    private int status;
-    private String reason;
+    private final int status;
+    private final String reason;
 }

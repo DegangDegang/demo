@@ -72,6 +72,22 @@ public class JwtTokenProvider {
         return getJws(token).getBody().get(TYPE).equals(REFRESH_TOKEN);
     }
 
+    private boolean isAccessToken(String token) {
+        return getJws(token).getBody().get(TYPE).equals(ACCESS_TOKEN);
+    }
+
+    public Long parseAccessToken(String token) {
+        try {
+            if (isAccessToken(token)) {
+                Claims claims = getJws(token).getBody();
+                return Long.parseLong(claims.getSubject());
+            }
+        } catch (ExpiredTokenException e) {
+            throw ExpiredTokenException.EXCEPTION;
+        }
+        throw InvalidTokenException.EXCEPTION;
+    }
+
     public Long parseRefreshToken(String token) {
         try {
             if (isRefreshToken(token)) {
