@@ -1,5 +1,7 @@
 package com.example.demo.domain.shortessay.service;
 
+import com.example.demo.domain.asset.keyword.presentation.dto.response.KeywordResponse;
+import com.example.demo.domain.asset.keyword.service.KeywordService;
 import com.example.demo.domain.shortessay.domain.Keyword;
 import com.example.demo.domain.shortessay.domain.ShortEssay;
 import com.example.demo.domain.shortessay.domain.ShortEssayComment;
@@ -37,12 +39,20 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 	private final ShortEssayRepository shortEssayRepository;
 	private final ShortEssayLikeRepository shortEssayLikeRepository;
 	private final ShortEssayCommentRepository shortEssayCommentRepository;
+	private final KeywordService keywordService;
 
 	@Override
 	public ShortEssayDetailResponse write(WriteShortEssayRequest writeShortEssayRequest,
 		User user) {
 
-		Keyword keyword = new Keyword("keyword1", "keyword2", "keyword3");
+		List<KeywordResponse> currentWords = keywordService.getCurrentWords();
+
+		String keyword1 = currentWords.getFirst().getWord();
+		String keyword2 = currentWords.get(1).getWord();
+		String keyword3 = currentWords.getLast().getWord();
+
+
+		Keyword keyword = new Keyword(keyword1, keyword2, keyword3);
 
 		ShortEssay shortEssay = ShortEssay.builder()
 			.content(writeShortEssayRequest.getContent())

@@ -33,13 +33,12 @@ public class User extends BaseEntity {
 
 	private String oauthId;
 
-	@Nullable
 	private String profileImgUrl;
 
 	private String biography;
 
 	@Enumerated(EnumType.STRING)
-	private AccountRole accountRole = AccountRole.USER;
+	private final AccountRole accountRole = AccountRole.USER;
 
 	@OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL)
 	private final List<Follow> followerList = new ArrayList<>();
@@ -74,10 +73,6 @@ public class User extends BaseEntity {
 			.createdAt(getCreatedAt())
 			.lastModifiedAt(getLastModifyAt())
 			.build();
-	}
-
-	public static User of(Long userId) {
-		return User.builder().id(userId).build();
 	}
 
 	public void update(String nickname, String profileImgUrl, String biography) {
