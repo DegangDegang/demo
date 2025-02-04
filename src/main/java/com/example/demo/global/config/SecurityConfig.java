@@ -44,7 +44,7 @@ public class SecurityConfig {
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/v1/winning/pension/lottery/admin/save/db",
                                         "/api/v1/winning/lottery/admin/save/db").hasRole(AccountRole.ADMIN.getValue())
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 );
 
 

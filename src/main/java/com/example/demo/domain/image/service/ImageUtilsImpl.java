@@ -25,6 +25,8 @@ import java.util.UUID;
 @Slf4j
 public class ImageUtilsImpl implements ImageUtils{
 
+    private final SecurityUtils securityUtils;
+
     @Value("${aws.s3.bucket}")
     private String bucket;
 
@@ -66,7 +68,7 @@ public class ImageUtilsImpl implements ImageUtils{
         }
 
         String randomName = UUID.randomUUID().toString();
-        String fileName = SecurityUtils.getCurrentUserId() + "|" + randomName + "." + ext;
+        String fileName = securityUtils.getCurrentUserId() + "|" + randomName + "." + ext;
 
         try {
             ObjectMetadata objMeta = new ObjectMetadata();

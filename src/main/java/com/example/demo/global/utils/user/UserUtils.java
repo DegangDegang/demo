@@ -9,4 +9,6 @@ public interface UserUtils {
 
     User getUserFromSecurityContext();
 
+    User getUserFromToken(String token);
+
 }
