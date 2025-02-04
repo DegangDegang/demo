@@ -126,7 +126,7 @@ class ShortEssayServiceImplTest {
 
 
         // when
-        List<ShortEssayDetailResponse> next = shortEssayService.getShortEssays(testEssay.getId(), 10, "next");
+        List<ShortEssayDetailResponse> next = shortEssayService.getShortEssays(testEssay.getId(), 10, "next", testUser);
 
         System.out.println("--------- insert End ------------");
         System.out.println("test.getId() = " + testEssay.getId());

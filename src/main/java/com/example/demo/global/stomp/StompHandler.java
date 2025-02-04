@@ -1,8 +1,5 @@
 package com.example.demo.global.stomp;
 
-import com.example.demo.global.utils.security.SecurityUtils;
-import com.example.demo.global.utils.user.UserUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
