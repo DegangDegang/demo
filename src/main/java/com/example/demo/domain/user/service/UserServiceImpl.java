@@ -69,14 +69,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Slice<UserProfileResponse> getFollowers(Pageable pageable, Long userId) {
 		userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
-		Slice<Follow> followers = followRepository.findByFromUserIdWithUser(userId, pageable);
+		Slice<Follow> followers = followRepository.findByToUserIdWithUser(userId, pageable);
 		return followers.map(follow -> new UserProfileResponse(follow.getFromUser().getUserInfo()));
 	}
 
 	@Override
 	public Slice<UserProfileResponse> getFollowings(Pageable pageable, Long userId) {
 		userRepository.findById(userId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
-		Slice<Follow> followings = followRepository.findByToUserIdWithUser(userId, pageable);
+		Slice<Follow> followings = followRepository.findByFromUserIdWithUser(userId, pageable);
 		return followings.map(follow -> new UserProfileResponse(follow.getToUser().getUserInfo()));
 	}
 

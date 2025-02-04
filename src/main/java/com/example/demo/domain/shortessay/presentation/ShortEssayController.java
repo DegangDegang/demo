@@ -12,12 +12,12 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,6 +36,7 @@ public class ShortEssayController {
 	private final ShortEssayService shortEssayService;
 	private final UserUtils userUtils;
 
+	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping
 	public ShortEssayDetailResponse writeShortEssay(@Valid @RequestBody WriteShortEssayRequest writeShortEssayRequest) {
 		User user = userUtils.getUserFromSecurityContext();
@@ -44,6 +46,7 @@ public class ShortEssayController {
 	@GetMapping("/{shortEssayId}")
 	public ShortEssayDetailResponse readShortEssay(@PathVariable Long shortEssayId) {
 		User user = userUtils.getUserFromSecurityContext();
+
 		return shortEssayService.read(shortEssayId, user);
 	}
 
@@ -55,9 +58,9 @@ public class ShortEssayController {
 
 	@GetMapping
 	public List<ShortEssayDetailResponse> getVideos(
-		@RequestParam(required = false) Long currentId, // 마지막으로 가져온 영상 ID
-		@RequestParam(defaultValue = "10") int size, // 한 번에 가져올 개수
-		@RequestParam(defaultValue = "prev") String direction // "prev" (이전 데이터) or "next" (새로운 데이터)
+		@RequestParam(required = false) Long currentId,
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "next") String direction
 	) {
 		User user = userUtils.getUserFromSecurityContext();
 		return shortEssayService.getShortEssays(currentId, size, direction, user);

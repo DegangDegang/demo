@@ -1,5 +1,7 @@
 package com.example.demo.domain.shortessay.presentation.request;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,4 +12,6 @@ public class WriteShortEssayRequest {
     private String content;
 
     private String imgUrl;
+
+    private List<String> keywords;
 }

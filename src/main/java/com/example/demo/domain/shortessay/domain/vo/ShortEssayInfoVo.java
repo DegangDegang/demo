@@ -1,6 +1,7 @@
 package com.example.demo.domain.shortessay.domain.vo;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -20,11 +21,8 @@ public class ShortEssayInfoVo {
     private final Integer likeCount;
     private final Integer commentCount;
 
-    private final String keyword1;
-    private final String keyword2;
-    private final String keyword3;
+    private final List<String> keywords;
 
     private final LocalDateTime createdAt;
     private final LocalDateTime lastModifiedAt;
-
 }

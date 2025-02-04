@@ -1,11 +1,14 @@
 package com.example.demo.domain.shortessay.presentation.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.example.demo.domain.shortessay.domain.vo.ShortEssayInfoVo;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Getter
 public class ShortEssayDetailResponse {
 
@@ -17,6 +20,8 @@ public class ShortEssayDetailResponse {
 	private final Integer commentCount;
 
 	private final HostInfo hostInfo;
+
+	private final List<String> keywords;
 
 	private boolean isOwner;
 	private boolean isLiked;
@@ -32,6 +37,7 @@ public class ShortEssayDetailResponse {
 		this.commentCount = shortEssayInfo.getCommentCount();
 		this.createdAt = shortEssayInfo.getCreatedAt();
 		this.lastModifiedAt = shortEssayInfo.getLastModifiedAt();
+		this.keywords = shortEssayInfo.getKeywords();
 
 		this.hostInfo = new HostInfo(shortEssayInfo.getUserId(), shortEssayInfo.getUserNickname(),
 			shortEssayInfo.getUserProfileImgUrl());
