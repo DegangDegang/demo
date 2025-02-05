@@ -8,14 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EssayRepository extends JpaRepository<Essay,Long> {
 
     Slice<Essay> findSliceByOrderByLastModifyAtDesc(Pageable pageable);
 
-    @Query("select distinct e from Essay e"+
-            " where e.user.id = :userId order by e.lastModifyAt desc")
-    List<Essay> findReservedByMe(@Param("userId") Long userId);
-
+    @Query("select e from Essay e" +
+            " where e.user.id = :userId and e.isDraft = true")
+    Optional<Essay> findDraftByUser(@Param("userId") Long userId);
 
 }

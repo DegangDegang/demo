@@ -23,4 +23,8 @@ public class EssayInfoVO {
     private final LocalDateTime lastModifyAt;
 
     private final UserInfoVO hostInfoVO;
+
+    private final Boolean isDraft;
+
+    private final String sentence;
 }

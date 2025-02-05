@@ -37,16 +37,23 @@ public class Essay extends BaseEntity {
     private String title;
 
     @Lob
+    @Column(length = 5000)
     private String content;
 
     private String imageUrl;
 
+    private Boolean isDraft;
+
+    private String sentence;
+
     @Builder
-    public Essay(User user, String title, String content, String imageUrl) {
+    public Essay(User user, String title, String content, String imageUrl, boolean isDraft, String sentence) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
+        this.isDraft = isDraft;
+        this.sentence = sentence;
     }
 
     public EssayInfoVO getEssayInfoVo() {
@@ -58,6 +65,8 @@ public class Essay extends BaseEntity {
                 .createAt(getCreatedAt())
                 .lastModifyAt(getLastModifyAt())
                 .hostInfoVO(user.getUserInfo())
+                .isDraft(isDraft)
+                .sentence(sentence)
                 .build();
     }
 
@@ -65,6 +74,10 @@ public class Essay extends BaseEntity {
         this.title = updateEssayDto.getTitle();
         this.content = updateEssayDto.getContent();
         this.imageUrl = updateEssayDto.getImageURL();
+    }
+
+    public void updateIsDraft() {
+        this.isDraft = true;
     }
 
     public Boolean checkUserIsHost(Long id) {
