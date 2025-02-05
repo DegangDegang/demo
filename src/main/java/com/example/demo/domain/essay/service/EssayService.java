@@ -6,10 +6,7 @@ import com.example.demo.domain.essay.domain.EssayLike;
 import com.example.demo.domain.essay.domain.repository.EssayCommentRepository;
 import com.example.demo.domain.essay.domain.repository.EssayLikeRepository;
 import com.example.demo.domain.essay.domain.repository.EssayRepository;
-import com.example.demo.domain.essay.exception.EssayCommentNotFoundException;
-import com.example.demo.domain.essay.exception.EssayLikeAlreadyExistsException;
-import com.example.demo.domain.essay.exception.EssayLikeNotFoundException;
-import com.example.demo.domain.essay.exception.EssayNotFoundException;
+import com.example.demo.domain.essay.exception.*;
 import com.example.demo.domain.essay.presentation.dto.request.CreateEssayCommentRequest;
 import com.example.demo.domain.essay.presentation.dto.request.CreateEssayRequest;
 import com.example.demo.domain.essay.presentation.dto.request.UpdateEssayRequest;
@@ -27,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -41,7 +39,6 @@ public class EssayService {
     private final EssayCommentRepository essayCommentRepository;
     private final SecurityUtils securityUtils;
 
-
     @Transactional
     public EssayResponse createEssay(CreateEssayRequest essayRequest){
 
@@ -55,11 +52,11 @@ public class EssayService {
     }
 
     @Transactional
-    public void deleteEssay(Long reservationId){
+    public void deleteEssay(Long essayId){
 
         User user = userUtils.getUserFromSecurityContext();
 
-        Essay essay = queryEssay(reservationId);
+        Essay essay = queryEssay(essayId);
 
         essay.validUserIsHost(user.getId());
 
@@ -86,6 +83,34 @@ public class EssayService {
         essay.validUserIsHost(currentUserId);
 
         essay.updateEssay(updateEssayRequest.toUpdateEssayDto());
+
+        return getEssayResponse(essay,currentUserId);
+    }
+
+    @Transactional
+    public void createEssayDraft(CreateEssayRequest essayRequest){
+
+        User user = userUtils.getUserFromSecurityContext();
+
+       essayRepository.findDraftByUser(user.getId())
+                .ifPresentOrElse(
+                        essay -> System.out.println(essay.getEssayComments()),
+                        () -> test()
+                );
+    }
+
+    private void test() {
+        Essay essay = Essay.builder().sentence("Asd").build();
+        essayRepository.save(essay);
+    }
+
+    //방 상세정보
+    public EssayResponse getEssayDraft() {
+
+        Long currentUserId = securityUtils.getCurrentUserId();
+
+        Essay essay = essayRepository.findDraftByUser(currentUserId)
+                .orElseThrow(() -> EssayDraftNotFoundException.EXCEPTION);
 
         return getEssayResponse(essay,currentUserId);
     }
@@ -176,6 +201,18 @@ public class EssayService {
                 .title(createEssayRequest.getTitle())
                 .content(createEssayRequest.getContent())
                 .imageUrl(createEssayRequest.getImageUrl())
+                .isDraft(true)
+                .build();
+    }
+
+    private Essay makeEssayDraft(CreateEssayRequest createEssayRequest,User user){
+
+        return Essay.builder()
+                .user(user)
+                .title(createEssayRequest.getTitle())
+                .content(createEssayRequest.getContent())
+                .imageUrl(createEssayRequest.getImageUrl())
+                .isDraft(false)
                 .build();
     }
 

@@ -29,6 +29,10 @@ public enum ErrorCode {
     ESSAY_LIKE_NOT_FOUND(404, "장편 좋아요를 찾을 수 없습니다"),
     ESSAY_LIKE_ALREADY_EXISTS(404, "이미 좋아요를 누른 상태 입니다"),
     ESSAY_COMMENT_NOT_FOUND(404, "장편 댓글을 찾을 수 없습니다"),
+    ESSAY_DRAFT_NOT_FOUND(404, "장편 댓글을 찾을 수 없습니다"),
+
+    SENTENCE_COMMENT_NOT_FOUND(404, "문장을 찾을 수 없습니다"),
+    PHRASE_COMMENT_NOT_FOUND(404, "오늘의 문장을 찾을 수 없습니다"),
 
     BAD_FILE_EXTENSION(404,  "FILE extension error"),
     FILE_EMPTY(404,  "FILE empty"),

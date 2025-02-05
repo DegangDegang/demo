@@ -84,4 +84,18 @@ public class EssayController {
         essayService.deleteEssayComment(commentId);
     }
 
+
+    @GetMapping("/draft")
+    public EssayResponse getDraftEssay() {
+        return essayService.getEssayDraft();
+    }
+
+    @PostMapping("/draft")
+    public void createDraftEssay(@RequestBody CreateEssayRequest createEssayRequest) {
+         essayService.createEssayDraft(createEssayRequest);
+    }
+
+
+
+
 }
