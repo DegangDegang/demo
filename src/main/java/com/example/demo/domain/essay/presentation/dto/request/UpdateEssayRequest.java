@@ -12,12 +12,9 @@ public class UpdateEssayRequest {
 
     private String content;
 
-    private String imageUrl;
-
     public UpdateEssayDto toUpdateEssayDto() {
         return new UpdateEssayDto(
                 title,
-                content,
-                imageUrl);
+                content);
     }
 }

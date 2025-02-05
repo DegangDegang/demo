@@ -13,8 +13,6 @@ public class EssayResponse {
 
     private String content;
 
-    private String imageUrl;
-
     private LocalDateTime createDate;
 
     private LocalDateTime lastModifyDate;
@@ -34,7 +32,6 @@ public class EssayResponse {
         essayId = essayInfoVO.getEssayId();
         title = essayInfoVO.getTitle();
         content = essayInfoVO.getContent();
-        imageUrl = essayInfoVO.getImageUrl();
         likeCount = likeCnt;
         commentCount = commentCnt;
         createDate = essayInfoVO.getCreateAt();

@@ -51,6 +51,15 @@ public class EssayController {
         return essayService.findAllEssay(pageRequest);
     }
 
+    @GetMapping("/my")
+    public Slice<EssayResponse> getMyEssays(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+
+        PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.DESC,"createdAt");
+        return essayService.findAllMyEssay(pageRequest);
+    }
+
 
     @PostMapping("/{id}/like")
     public EssayResponse likeEssay(@PathVariable("id") Long essayId) {
@@ -84,18 +93,14 @@ public class EssayController {
         essayService.deleteEssayComment(commentId);
     }
 
-
     @GetMapping("/draft")
     public EssayResponse getDraftEssay() {
         return essayService.getEssayDraft();
     }
 
     @PostMapping("/draft")
-    public void createDraftEssay(@RequestBody CreateEssayRequest createEssayRequest) {
-         essayService.createEssayDraft(createEssayRequest);
+    public EssayResponse createDraftEssay(@RequestBody CreateEssayRequest createEssayRequest) {
+        return essayService.createEssayDraft(createEssayRequest);
     }
-
-
-
 
 }

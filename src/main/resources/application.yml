@@ -2,15 +2,18 @@ spring:
   config:
     import: "optional:configserver:"
   datasource:
-    url: jdbc:mysql://localhost:3306/degang?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:13306/degang?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: 1234
-
+  sql:
+    init:
+      mode: always
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     open-in-view: false
     hibernate:
       ddl-auto: update
+    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
