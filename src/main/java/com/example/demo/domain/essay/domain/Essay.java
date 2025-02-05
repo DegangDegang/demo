@@ -40,18 +40,15 @@ public class Essay extends BaseEntity {
     @Column(length = 5000)
     private String content;
 
-    private String imageUrl;
-
     private Boolean isDraft;
 
     private String sentence;
 
     @Builder
-    public Essay(User user, String title, String content, String imageUrl, boolean isDraft, String sentence) {
+    public Essay(User user, String title, String content, boolean isDraft, String sentence) {
         this.user = user;
         this.title = title;
         this.content = content;
-        this.imageUrl = imageUrl;
         this.isDraft = isDraft;
         this.sentence = sentence;
     }
@@ -61,7 +58,6 @@ public class Essay extends BaseEntity {
                 .essayId(id)
                 .title(title)
                 .content(content)
-                .imageUrl(imageUrl)
                 .createAt(getCreatedAt())
                 .lastModifyAt(getLastModifyAt())
                 .hostInfoVO(user.getUserInfo())
@@ -73,11 +69,10 @@ public class Essay extends BaseEntity {
     public void updateEssay(UpdateEssayDto updateEssayDto) {
         this.title = updateEssayDto.getTitle();
         this.content = updateEssayDto.getContent();
-        this.imageUrl = updateEssayDto.getImageURL();
     }
 
     public void updateIsDraft() {
-        this.isDraft = true;
+        this.isDraft = false;
     }
 
     public Boolean checkUserIsHost(Long id) {

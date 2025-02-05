@@ -12,8 +12,8 @@ public enum ErrorCode {
     NOTIFICATION_FCM_TOKEN_INVALID(400, "FCM Token이 유효하지 않습니다."),
     NOT_NULL_TOKEN(400, "토큰 값이 NULL일 수 없습니다"),
     MISMATCH_USER_OAUTH_ID(400, "유저의  OAuth ID값이 토큰 ID 값과 일치하지 않습니다"),
-    ESSAY_NOT_HOST(400, "essay의 주인이 아닙니다"),
-    ESSAY_COMMENT_NOT_HOST(400, "essay 댓글의 주인이 아닙니다"),
+    ESSAY_NOT_HOST(400, "장필의 주인이 아닙니다"),
+    ESSAY_COMMENT_NOT_HOST(400, "장필 댓글의 주인이 아닙니다"),
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),
     EXPIRED_TOKEN(401, "토큰이 만료되었습니다."),
@@ -25,11 +25,11 @@ public enum ErrorCode {
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     POST_NOT_FOUND(404, "게시글을 찾을 수 없습니다."),
-    ESSAY_NOT_FOUND(404, "장편을 찾을 수 없습니다"),
-    ESSAY_LIKE_NOT_FOUND(404, "장편 좋아요를 찾을 수 없습니다"),
+    ESSAY_NOT_FOUND(404, "장필을 찾을 수 없습니다"),
+    ESSAY_LIKE_NOT_FOUND(404, "장필 좋아요를 찾을 수 없습니다"),
     ESSAY_LIKE_ALREADY_EXISTS(404, "이미 좋아요를 누른 상태 입니다"),
-    ESSAY_COMMENT_NOT_FOUND(404, "장편 댓글을 찾을 수 없습니다"),
-    ESSAY_DRAFT_NOT_FOUND(404, "장편 댓글을 찾을 수 없습니다"),
+    ESSAY_COMMENT_NOT_FOUND(404, "장필 댓글을 찾을 수 없습니다"),
+    ESSAY_DRAFT_NOT_FOUND(404, "임시 저장된 장필이 없습니다."),
 
     SENTENCE_COMMENT_NOT_FOUND(404, "문장을 찾을 수 없습니다"),
     PHRASE_COMMENT_NOT_FOUND(404, "오늘의 문장을 찾을 수 없습니다"),

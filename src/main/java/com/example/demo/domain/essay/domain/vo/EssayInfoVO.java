@@ -16,8 +16,6 @@ public class EssayInfoVO {
 
     private final String content;
 
-    private final String imageUrl;
-
     private final LocalDateTime createAt;
 
     private final LocalDateTime lastModifyAt;

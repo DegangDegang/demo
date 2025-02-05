@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS sentences;
+
+CREATE TABLE sentences (
+    sentence_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sentence VARCHAR(255) NOT NULL
+);

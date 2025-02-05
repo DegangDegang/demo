@@ -1,5 +1,6 @@
 package com.example.demo.domain.essay.presentation.dto.request;
 
+import com.example.demo.domain.essay.service.dto.UpdateEssayDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,5 +12,9 @@ public class CreateEssayRequest {
 
     private String content;
 
-    private String imageUrl;
+    public UpdateEssayDto toUpdateEssayDto() {
+        return new UpdateEssayDto(
+                title,
+                content);
+    }
 }

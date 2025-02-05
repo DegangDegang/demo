@@ -13,6 +13,7 @@ import com.example.demo.domain.essay.presentation.dto.request.UpdateEssayRequest
 import com.example.demo.domain.essay.presentation.dto.response.EssayBriefInfoDto;
 import com.example.demo.domain.essay.presentation.dto.response.EssayCommentInfoDto;
 import com.example.demo.domain.essay.presentation.dto.response.EssayResponse;
+import com.example.demo.domain.essay.service.dto.UpdateEssayDto;
 import com.example.demo.domain.user.domain.User;
 import com.example.demo.global.utils.security.SecurityUtils;
 import com.example.demo.global.utils.user.UserUtils;
@@ -40,15 +41,22 @@ public class EssayService {
     private final SecurityUtils securityUtils;
 
     @Transactional
-    public EssayResponse createEssay(CreateEssayRequest essayRequest){
+    public EssayResponse createEssay(CreateEssayRequest createEssayRequest){
 
         User user = userUtils.getUserFromSecurityContext();
 
-        Essay essay = makeEssay(essayRequest, user);
+        return essayRepository.findDraftByUser(user.getId())
+                .map(essay -> {
+                    essay.updateEssay(createEssayRequest.toUpdateEssayDto());
+                    essay.updateIsDraft();
+                    return getEssayResponse(essay, user.getId());
+                })
+                .orElseGet(() -> {
+                    Essay newEssay = makeEssay(createEssayRequest, user);
+                    essayRepository.save(newEssay);
+                    return getEssayResponse(newEssay,user.getId());
+                });
 
-        essayRepository.save(essay);
-
-        return getEssayResponse(essay, user.getId());
     }
 
     @Transactional
@@ -88,20 +96,19 @@ public class EssayService {
     }
 
     @Transactional
-    public void createEssayDraft(CreateEssayRequest essayRequest){
-
+    public EssayResponse createEssayDraft(CreateEssayRequest createEssayRequest) {
         User user = userUtils.getUserFromSecurityContext();
 
-       essayRepository.findDraftByUser(user.getId())
-                .ifPresentOrElse(
-                        essay -> System.out.println(essay.getEssayComments()),
-                        () -> test()
-                );
-    }
-
-    private void test() {
-        Essay essay = Essay.builder().sentence("Asd").build();
-        essayRepository.save(essay);
+        return essayRepository.findDraftByUser(user.getId())
+                .map(essay -> {
+                    essay.updateEssay(createEssayRequest.toUpdateEssayDto());
+                    return getEssayResponse(essay, user.getId());
+                })
+                .orElseGet(() -> {
+                    Essay newEssay = makeEssayDraft(createEssayRequest, user);
+                    essayRepository.save(newEssay);
+                    return getEssayResponse(newEssay,user.getId());
+                });
     }
 
     //방 상세정보
@@ -115,12 +122,21 @@ public class EssayService {
         return getEssayResponse(essay,currentUserId);
     }
 
-    @Transactional
     public Slice<EssayResponse> findAllEssay(PageRequest pageRequest) {
 
         Long currentUserId = securityUtils.getCurrentUserId();
 
         Slice<Essay> sliceReservation = essayRepository.findSliceByOrderByLastModifyAtDesc(pageRequest);
+
+        return sliceReservation.map(
+                essay -> getEssayResponse(essay,currentUserId));
+    }
+
+    public Slice<EssayResponse> findAllMyEssay(PageRequest pageRequest) {
+
+        Long currentUserId = securityUtils.getCurrentUserId();
+
+        Slice<Essay> sliceReservation = essayRepository.findAllMyEssay(currentUserId,pageRequest);
 
         return sliceReservation.map(
                 essay -> getEssayResponse(essay,currentUserId));
@@ -200,8 +216,7 @@ public class EssayService {
                 .user(user)
                 .title(createEssayRequest.getTitle())
                 .content(createEssayRequest.getContent())
-                .imageUrl(createEssayRequest.getImageUrl())
-                .isDraft(true)
+                .isDraft(false)
                 .build();
     }
 
@@ -211,8 +226,7 @@ public class EssayService {
                 .user(user)
                 .title(createEssayRequest.getTitle())
                 .content(createEssayRequest.getContent())
-                .imageUrl(createEssayRequest.getImageUrl())
-                .isDraft(false)
+                .isDraft(true)
                 .build();
     }
 

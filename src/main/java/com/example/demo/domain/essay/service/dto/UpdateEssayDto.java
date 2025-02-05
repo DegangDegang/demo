@@ -11,6 +11,4 @@ public class UpdateEssayDto {
 
     private String content;
 
-    private String imageURL;
-
 }
