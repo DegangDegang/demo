@@ -14,4 +14,6 @@ public class WriteShortEssayRequest {
     private String imgUrl;
 
     private List<String> keywords;
+
+    private List<String> currentKeywords;
 }

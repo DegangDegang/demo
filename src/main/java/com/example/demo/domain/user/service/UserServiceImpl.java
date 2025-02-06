@@ -1,12 +1,15 @@
 package com.example.demo.domain.user.service;
 
+import com.example.demo.domain.notification.domain.NotificationType;
 import com.example.demo.domain.user.domain.Follow;
 import com.example.demo.domain.user.domain.User;
 import com.example.demo.domain.user.domain.repository.FollowRepository;
 import com.example.demo.domain.user.domain.repository.UserRepository;
 import com.example.demo.domain.user.presentation.dto.request.UpdateUserRequest;
+import com.example.demo.domain.user.presentation.dto.response.FollowNotifyInfo;
 import com.example.demo.domain.user.presentation.dto.response.UserDetailResponse;
 import com.example.demo.domain.user.presentation.dto.response.UserProfileResponse;
+import com.example.demo.global.aop.Notify;
 import com.example.demo.global.exception.UserNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -80,11 +83,17 @@ public class UserServiceImpl implements UserService {
 		return followings.map(follow -> new UserProfileResponse(follow.getToUser().getUserInfo()));
 	}
 
+	@Notify
 	@Override
-	public void follow(Long toId, User user) {
+	public FollowNotifyInfo follow(Long toId, User user) {
 		User toUser = userRepository.findById(toId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
 		Follow follow = new Follow(user, toUser);
 		followRepository.save(follow);
+
+		String goUrl = "api/v1/users" + user.getId();
+		String content = String.format("%s님이 당신을 팔로우했습니다.", user.getNickname());
+
+		return new FollowNotifyInfo(toUser, goUrl, NotificationType.FOLLOW, content);
 	}
 
 	@Override

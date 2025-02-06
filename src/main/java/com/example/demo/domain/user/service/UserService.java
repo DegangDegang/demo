@@ -5,6 +5,7 @@ import org.springframework.data.domain.Slice;
 
 import com.example.demo.domain.user.domain.User;
 import com.example.demo.domain.user.presentation.dto.request.UpdateUserRequest;
+import com.example.demo.domain.user.presentation.dto.response.FollowNotifyInfo;
 import com.example.demo.domain.user.presentation.dto.response.UserDetailResponse;
 import com.example.demo.domain.user.presentation.dto.response.UserProfileResponse;
 
@@ -20,7 +21,7 @@ public interface UserService {
 
 	Slice<UserProfileResponse> getFollowings(Pageable pageable, Long userId);
 
-	void follow(Long toId, User user);
+	FollowNotifyInfo follow(Long toId, User user);
 
 	void unfollow(Long toId, User user);
 }

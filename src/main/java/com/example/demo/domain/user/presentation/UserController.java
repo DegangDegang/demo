@@ -56,21 +56,9 @@ public class UserController {
 		return userService.getFollowers(pageable, userId);
 	}
 
-	@GetMapping("/my/follower")
-	public Slice<UserProfileResponse> getMyFollowers(@PageableDefault Pageable pageable) {
-		User user = userUtils.getUserFromSecurityContext();
-		return userService.getFollowers(pageable, user.getId());
-	}
-
 	@GetMapping("/{userId}/following")
 	public Slice<UserProfileResponse> getFollowing(@PathVariable Long userId, @PageableDefault Pageable pageable) {
 		return userService.getFollowings(pageable, userId);
-	}
-
-	@GetMapping("/my/following")
-	public Slice<UserProfileResponse> getMyFollowing(@PageableDefault Pageable pageable) {
-		User user = userUtils.getUserFromSecurityContext();
-		return userService.getFollowings(pageable, user.getId());
 	}
 
 	@PostMapping("/follow/{toId}")

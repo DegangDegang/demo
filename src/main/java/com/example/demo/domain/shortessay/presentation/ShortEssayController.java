@@ -67,9 +67,9 @@ public class ShortEssayController {
 	}
 
 	@PostMapping("/{shortEssayId}/like")
-	public ShortEssayDetailResponse likeShortEssay(@PathVariable Long shortEssayId) {
+	public void likeShortEssay(@PathVariable Long shortEssayId) {
 		User user = userUtils.getUserFromSecurityContext();
-		return shortEssayService.like(shortEssayId, user);
+		shortEssayService.like(shortEssayId, user);
 	}
 
 	@DeleteMapping("/{shortEssayId}/like")

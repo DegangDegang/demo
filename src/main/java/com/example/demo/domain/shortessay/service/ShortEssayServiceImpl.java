@@ -1,5 +1,6 @@
 package com.example.demo.domain.shortessay.service;
 
+import com.example.demo.domain.notification.domain.NotificationType;
 import com.example.demo.domain.shortessay.domain.ShortEssay;
 import com.example.demo.domain.shortessay.domain.ShortEssayComment;
 import com.example.demo.domain.shortessay.domain.ShortEssayLike;
@@ -11,9 +12,12 @@ import com.example.demo.domain.shortessay.exception.ShortEssayLikeNotFoundExcept
 import com.example.demo.domain.shortessay.exception.ShortEssayNotFoundException;
 import com.example.demo.domain.shortessay.presentation.request.WriteShortEssayCommentRequest;
 import com.example.demo.domain.shortessay.presentation.request.WriteShortEssayRequest;
+import com.example.demo.domain.shortessay.presentation.response.ShortEssayCommentInfo;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayCommentResponse;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayDetailResponse;
+import com.example.demo.domain.shortessay.presentation.response.ShortEssayLikeInfo;
 import com.example.demo.domain.user.domain.User;
+import com.example.demo.global.aop.Notify;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,9 +130,9 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 	}
 
 
-
+	@Notify
 	@Override
-	public ShortEssayDetailResponse like(Long shortEssayId, User user) {
+	public ShortEssayLikeInfo like(Long shortEssayId, User user) {
 
 		shortEssayLikeRepository.findByUserIdAndShortEssayId(user.getId(), shortEssayId)
 			.ifPresent(like -> {
@@ -142,7 +146,10 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 			.build();
 
 		shortEssayLikeRepository.save(shortEssayLike);
-		return new ShortEssayDetailResponse(shortEssay.getShortEssayInfo());
+		String goUrl = "api/v1/shortEssays/" + shortEssay.getId();
+		String content = user.getNickname() + "님이 당신의 단필에 좋아요를 눌렀습니다.";
+
+		return new ShortEssayLikeInfo(shortEssay.getUser(), goUrl, NotificationType.LIKE, content);
 	}
 
 	@Override
@@ -165,7 +172,7 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 	}
 
 	@Override
-	public void comment(Long shortEssayId, WriteShortEssayCommentRequest commentRequest,
+	public ShortEssayCommentInfo comment(Long shortEssayId, WriteShortEssayCommentRequest commentRequest,
 		User user) {
 
 		ShortEssay shortEssay = findById(shortEssayId);
@@ -175,6 +182,12 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 			.content(commentRequest.getContent())
 			.build();
 		shortEssayCommentRepository.save(shortEssayComment);
+
+		String goUrl = "api/v1/shortEssays/" + shortEssay.getId();
+		String content = user.getNickname() + "님이 당신의 게시글에 댓글을 달았습니다. \n"
+			+ user.getNickname() +": " + commentRequest.getContent().substring(0, 10) + "...";
+
+		return new ShortEssayCommentInfo(shortEssay.getUser(), goUrl, NotificationType.COMMENT, content);
 	}
 
 	@Override

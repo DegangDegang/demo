@@ -65,8 +65,7 @@ public class ShortEssay extends BaseEntity {
 			.commentCount(comments.size())
 			.createdAt(getCreatedAt())
 			.lastModifiedAt(getLastModifyAt())
-			.keywords(new ArrayList<>(keywords)
-			)
+			.keywords(new ArrayList<>(keywords))
 			.build();
 	}
 

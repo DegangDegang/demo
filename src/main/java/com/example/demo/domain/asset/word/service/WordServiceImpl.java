@@ -22,7 +22,7 @@ public class WordServiceImpl implements WordService{
 	private final KeywordRepository keywordRepository;
 
 	@Override
-	@Scheduled(cron = "0 0 0,4,8,12,16,20 * * *")
+	@Scheduled(cron = "0 58 3,7,11,15,19,23 * * *")
 	public void createRandomWords() {
 		List<Word> randomWords = wordRepository.findRandomWords(3);
 		for (Word randomWord : randomWords) {
