@@ -1,11 +1,12 @@
 package com.example.demo.domain.user.service;
 
-import com.example.demo.domain.notification.domain.NotificationType;
+import com.example.demo.domain.shortessay.presentation.response.HostInfo;
 import com.example.demo.domain.user.domain.Follow;
 import com.example.demo.domain.user.domain.User;
 import com.example.demo.domain.user.domain.repository.FollowRepository;
 import com.example.demo.domain.user.domain.repository.UserRepository;
 import com.example.demo.domain.user.presentation.dto.request.UpdateUserRequest;
+import com.example.demo.domain.user.presentation.dto.response.FollowDeleteNotification;
 import com.example.demo.domain.user.presentation.dto.response.FollowNotifyInfo;
 import com.example.demo.domain.user.presentation.dto.response.UserDetailResponse;
 import com.example.demo.domain.user.presentation.dto.response.UserProfileResponse;
@@ -90,14 +91,15 @@ public class UserServiceImpl implements UserService {
 		Follow follow = new Follow(user, toUser);
 		followRepository.save(follow);
 
-		String goUrl = "api/v1/users" + user.getId();
-		String content = String.format("%s님이 당신을 팔로우했습니다.", user.getNickname());
 
-		return new FollowNotifyInfo(toUser, goUrl, NotificationType.FOLLOW, content);
+
+
+		return new FollowNotifyInfo(new HostInfo(toUser.getId(), toUser.getNickname(), toUser.getProfileImgUrl()),
+			new HostInfo(user.getId(), user.getNickname(), user.getProfileImgUrl()), user.getId());
 	}
 
 	@Override
-	public void unfollow(Long toId, User user) {
+	public FollowDeleteNotification unfollow(Long toId, User user) {
 
 		Follow follow = followRepository.findByToUserId(toId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
 
@@ -105,6 +107,15 @@ public class UserServiceImpl implements UserService {
 			throw UserNotFoundException.EXCEPTION;
 		}
 		followRepository.delete(follow);
+
+		User toUser = userRepository.findById(toId).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+
+		return FollowDeleteNotification.builder()
+			.receiver(toUser.getUserInfo())
+			.sender(user.getUserInfo())
+			.targetId(follow.getId())
+		.build();
+
 	}
 
 	private void validateDuplicateNickname(String nickname) {

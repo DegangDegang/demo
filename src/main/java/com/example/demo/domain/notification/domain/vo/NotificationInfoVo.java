@@ -13,10 +13,15 @@ public class NotificationInfoVo {
 	private final String content;
 	private final String url;
 	private final Boolean isRead;
+	private final String type;
 
-	private final Long userId;
-	private final String userNickname;
-	private final String userProfileImgUrl;
+	private final Long receiverId;
+	private final String receiverNickname;
+	private final String receiverProfileImgUrl;
+
+	private final Long senderId;
+	private final String senderNickname;
+	private final String senderProfileImgUrl;
 
 	private final LocalDateTime createdAt;
 	private final LocalDateTime lastModifiedAt;

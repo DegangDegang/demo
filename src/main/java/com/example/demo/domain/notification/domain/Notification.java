@@ -36,22 +36,36 @@ public class Notification extends BaseEntity {
 
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "receiver_id")
 	private User receiver;
+
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "sender_id")
+	private User sender;
 
 	private String url; // 관련된 url
 
 	@Enumerated(EnumType.STRING)
 	private NotificationType notificationType;
 
+	@Enumerated(EnumType.STRING)
+	private TargetType targetType;
+
+	private Long targetId;
+
 	private Boolean isRaed;
 
 	@Builder
-	public Notification(String content, User receiver, String url, NotificationType notificationType) {
+	public Notification(String content, User receiver, User sender, String url, NotificationType notificationType,
+		TargetType targetType, Long targetId) {
 		this.content = content;
 		this.receiver = receiver;
+		this.sender = sender;
 		this.url = url;
 		this.notificationType = notificationType;
+		this.targetType = targetType;
+		this.targetId = targetId;
 		this.isRaed = false;
 	}
 
@@ -61,12 +75,20 @@ public class Notification extends BaseEntity {
 			.content(content)
 			.url(url)
 			.isRead(isRaed)
-			.userId(receiver.getId())
-			.userNickname(receiver.getNickname())
-			.userProfileImgUrl(receiver.getProfileImgUrl())
+			.type(notificationType.getValue())
+			.receiverId(receiver.getId())
+			.receiverNickname(receiver.getNickname())
+			.receiverProfileImgUrl(receiver.getProfileImgUrl())
+			.senderId(sender.getId())
+			.senderNickname(sender.getNickname())
+			.senderProfileImgUrl(sender.getProfileImgUrl())
 			.createdAt(getCreatedAt())
 			.lastModifiedAt(getLastModifyAt())
 			.build();
 
+	}
+
+	public void read() {
+		this.isRaed = true;
 	}
 }

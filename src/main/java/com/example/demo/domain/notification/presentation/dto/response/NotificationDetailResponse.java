@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class NotificationResponse {
+public class NotificationDetailResponse {
 
 	private final Long notificationId;
 
@@ -19,21 +19,25 @@ public class NotificationResponse {
 
 	private final Boolean isRead;
 
-	private final HostInfo hostInfo;
+	private final HostInfo senderInfo;
 
 	private final LocalDateTime createdAt;
 
 	private final LocalDateTime lastModifiedAt;
 
+	private final String notificationType;
+
 	@Builder
-	public NotificationResponse(NotificationInfoVo notificationInfoVo) {
+	public NotificationDetailResponse(NotificationInfoVo notificationInfoVo) {
 		this.notificationId = notificationInfoVo.getNotificationId();
 		this.content = notificationInfoVo.getContent();
 		this.url = notificationInfoVo.getUrl();
 		this.isRead = notificationInfoVo.getIsRead();
 		this.createdAt = notificationInfoVo.getCreatedAt();
 		this.lastModifiedAt = notificationInfoVo.getLastModifiedAt();
+		this.notificationType = notificationInfoVo.getType();
 
-		this.hostInfo = new HostInfo(notificationInfoVo.getUserId(), notificationInfoVo.getUserNickname(), notificationInfoVo.getUserProfileImgUrl());
+		this.senderInfo = new HostInfo(notificationInfoVo.getSenderId(), notificationInfoVo.getSenderNickname(),
+			notificationInfoVo.getSenderProfileImgUrl());
 	}
 }

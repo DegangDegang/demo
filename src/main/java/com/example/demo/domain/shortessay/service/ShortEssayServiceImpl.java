@@ -1,6 +1,7 @@
 package com.example.demo.domain.shortessay.service;
 
 import com.example.demo.domain.notification.domain.NotificationType;
+import com.example.demo.domain.notification.domain.TargetType;
 import com.example.demo.domain.shortessay.domain.ShortEssay;
 import com.example.demo.domain.shortessay.domain.ShortEssayComment;
 import com.example.demo.domain.shortessay.domain.ShortEssayLike;
@@ -12,18 +13,25 @@ import com.example.demo.domain.shortessay.exception.ShortEssayLikeNotFoundExcept
 import com.example.demo.domain.shortessay.exception.ShortEssayNotFoundException;
 import com.example.demo.domain.shortessay.presentation.request.WriteShortEssayCommentRequest;
 import com.example.demo.domain.shortessay.presentation.request.WriteShortEssayRequest;
+import com.example.demo.domain.shortessay.presentation.response.HostInfo;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayCommentInfo;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayCommentResponse;
+import com.example.demo.domain.shortessay.presentation.response.ShortEssayDeleteCommentNotification;
+import com.example.demo.domain.shortessay.presentation.response.ShortEssayDeleteLikeNotification;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayDetailResponse;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayLikeInfo;
 import com.example.demo.domain.user.domain.User;
+import com.example.demo.domain.user.domain.repository.UserRepository;
+import com.example.demo.global.aop.DeleteNotification;
 import com.example.demo.global.aop.Notify;
+import com.example.demo.global.exception.UserNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +41,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -41,6 +50,7 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 	private final ShortEssayRepository shortEssayRepository;
 	private final ShortEssayLikeRepository shortEssayLikeRepository;
 	private final ShortEssayCommentRepository shortEssayCommentRepository;
+	private final UserRepository userRepository;
 
 	@Override
 	public ShortEssayDetailResponse write(WriteShortEssayRequest writeShortEssayRequest,
@@ -129,7 +139,6 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 			.collect(Collectors.toList());
 	}
 
-
 	@Notify
 	@Override
 	public ShortEssayLikeInfo like(Long shortEssayId, User user) {
@@ -146,14 +155,19 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 			.build();
 
 		shortEssayLikeRepository.save(shortEssayLike);
-		String goUrl = "api/v1/shortEssays/" + shortEssay.getId();
-		String content = user.getNickname() + "님이 당신의 단필에 좋아요를 눌렀습니다.";
 
-		return new ShortEssayLikeInfo(shortEssay.getUser(), goUrl, NotificationType.LIKE, content);
+		User toUser = shortEssay.getUser();
+
+		log.info("senderId = {}, receiverId = {}", toUser.getId(), user.getId());
+
+		return new ShortEssayLikeInfo(new HostInfo(toUser.getId(), toUser.getNickname(), toUser.getProfileImgUrl()),
+			new HostInfo(user.getId(), user.getNickname(),
+				user.getProfileImgUrl()), NotificationType.LIKE, TargetType.SHORT_ESSAY, shortEssay.getId());
 	}
 
+	@DeleteNotification
 	@Override
-	public ShortEssayDetailResponse unlike(Long shortEssayId, User user) {
+	public ShortEssayDeleteLikeNotification unlike(Long shortEssayId, User user) {
 
 		ShortEssayLike shortEssayLike = shortEssayLikeRepository.findByUserIdAndShortEssayId(
 			user.getId(), shortEssayId).orElseThrow(() -> ShortEssayLikeNotFoundException.EXCEPTION);
@@ -168,7 +182,13 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 		shortEssayDetailResponse.checkIsOwner(user.getId().equals(shortEssay.getUser().getId()));
 		shortEssayDetailResponse.checkIsLiked(false);
 
-		return shortEssayDetailResponse;
+		User u = userRepository.findById(user.getId()).orElseThrow(() -> UserNotFoundException.EXCEPTION);
+
+		return ShortEssayDeleteLikeNotification.builder()
+			.sender(u.getUserInfo())
+			.receiver(shortEssay.getUser().getUserInfo())
+			.targetId(shortEssay.getId())
+			.build();
 	}
 
 	@Override
@@ -183,20 +203,29 @@ public class ShortEssayServiceImpl implements ShortEssayService {
 			.build();
 		shortEssayCommentRepository.save(shortEssayComment);
 
-		String goUrl = "api/v1/shortEssays/" + shortEssay.getId();
-		String content = user.getNickname() + "님이 당신의 게시글에 댓글을 달았습니다. \n"
-			+ user.getNickname() +": " + commentRequest.getContent().substring(0, 10) + "...";
+		User receiver = shortEssay.getUser();
 
-		return new ShortEssayCommentInfo(shortEssay.getUser(), goUrl, NotificationType.COMMENT, content);
+		return new ShortEssayCommentInfo(new HostInfo(user.getId(), user.getNickname(), user.getProfileImgUrl()),
+			new HostInfo(
+				receiver.getId(), receiver.getNickname(), receiver.getProfileImgUrl()), shortEssayComment.getId());
 	}
 
+	@DeleteNotification
 	@Override
-	public void deleteComment(Long shortEssayId, Long commentId, User user) {
+	public ShortEssayDeleteCommentNotification deleteComment(Long shortEssayId, Long commentId, User user) {
 
 		ShortEssayComment shortEssayComment = shortEssayCommentRepository.findById(commentId)
 			.orElseThrow();
 
 		shortEssayCommentRepository.delete(shortEssayComment);
+
+		ShortEssay shortEssay = findById(shortEssayId);
+
+		return ShortEssayDeleteCommentNotification.builder()
+			.sender(user.getUserInfo())
+			.receiver(shortEssay.getUser().getUserInfo())
+			.targetId(shortEssay.getId())
+			.build();
 	}
 
 	@Override

@@ -2,6 +2,8 @@ package com.example.demo.domain.user.presentation.dto.response;
 
 import com.example.demo.domain.notification.domain.NotificationType;
 import com.example.demo.domain.notification.domain.NotifyInfo;
+import com.example.demo.domain.notification.domain.TargetType;
+import com.example.demo.domain.shortessay.presentation.response.HostInfo;
 import com.example.demo.domain.user.domain.User;
 
 import lombok.Builder;
@@ -10,17 +12,31 @@ import lombok.Getter;
 @Getter
 public class FollowNotifyInfo implements NotifyInfo {
 
-	private final User receiver;
-	private final String goUrl;
+	private final HostInfo receiver;
+	private final HostInfo sender;
+	private String goUrl;
 	private final NotificationType notificationType;
-	private final String content;
+	private String content;
+	private final TargetType targetType;
+	private final Long targetId;
 
 	@Builder
-	public FollowNotifyInfo(User receiver, String goUrl, NotificationType notificationType, String content) {
+	public FollowNotifyInfo(HostInfo receiver, HostInfo sender, Long targetId) {
 		this.receiver = receiver;
-		this.goUrl = goUrl;
-		this.notificationType = notificationType;
+		this.sender = sender;
+		this.notificationType = NotificationType.FOLLOW;
+		this.targetId = targetId;
+		this.targetType = null;
+	}
+
+
+	@Override
+	public void writeContent(String content) {
 		this.content = content;
 	}
 
+	@Override
+	public void writeGoUrl(String goUrl) {
+		this.goUrl = goUrl;
+	}
 }

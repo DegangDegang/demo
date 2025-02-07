@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum NotificationType {
 
-	LIKE("like"), FOLLOW("follow"), COMMENT("comment");
+	LIKE("좋아요"), FOLLOW("팔로우"), COMMENT("댓글");
 
-	private final String message;
+	private final String value;
 
 }

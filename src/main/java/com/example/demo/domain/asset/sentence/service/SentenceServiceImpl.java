@@ -26,8 +26,7 @@ public class SentenceServiceImpl implements SentenceService {
 	private final PhraseRepository phraseRepository;
 
 	@Override
-	//@Scheduled(cron = "59 59 23 * * MON,THU")
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "59 59 23 * * MON,THU")
 	public void createRandomWords() {
 		Sentence sentence = sentenceRepository.findRandomSentence()
 				.orElseThrow(() -> SentenceNotFoundException.EXCEPTION);

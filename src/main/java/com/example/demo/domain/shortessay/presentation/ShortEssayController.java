@@ -73,9 +73,9 @@ public class ShortEssayController {
 	}
 
 	@DeleteMapping("/{shortEssayId}/like")
-	public ShortEssayDetailResponse unlikeShortEssay(@PathVariable Long shortEssayId) {
+	public void unlikeShortEssay(@PathVariable Long shortEssayId) {
 		User user = userUtils.getUserFromSecurityContext();
-		return shortEssayService.unlike(shortEssayId, user);
+		shortEssayService.unlike(shortEssayId, user);
 	}
 
 	@PostMapping("/{shortEssayId}/comments")

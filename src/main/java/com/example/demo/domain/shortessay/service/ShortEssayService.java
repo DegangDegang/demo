@@ -4,6 +4,8 @@ import com.example.demo.domain.shortessay.presentation.request.WriteShortEssayCo
 import com.example.demo.domain.shortessay.presentation.request.WriteShortEssayRequest;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayCommentInfo;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayCommentResponse;
+import com.example.demo.domain.shortessay.presentation.response.ShortEssayDeleteCommentNotification;
+import com.example.demo.domain.shortessay.presentation.response.ShortEssayDeleteLikeNotification;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayDetailResponse;
 import com.example.demo.domain.shortessay.presentation.response.ShortEssayLikeInfo;
 import com.example.demo.domain.user.domain.User;
@@ -24,9 +26,9 @@ public interface ShortEssayService {
 
     ShortEssayLikeInfo like(Long shortEssayId, User user);
 
-    ShortEssayDetailResponse unlike(Long shortEssayId, User user);
+    ShortEssayDeleteLikeNotification unlike(Long shortEssayId, User user);
 
-    void deleteComment(Long shortEssayId, Long commentId, User user);
+    ShortEssayDeleteCommentNotification deleteComment(Long shortEssayId, Long commentId, User user);
 
     ShortEssayCommentInfo comment(Long shortEssayId, WriteShortEssayCommentRequest commentRequest, User user);
 
