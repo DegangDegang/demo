@@ -3,6 +3,7 @@ package com.example.demo.domain.essay.presentation;
 import com.example.demo.domain.essay.presentation.dto.request.CreateEssayCommentRequest;
 import com.example.demo.domain.essay.presentation.dto.request.CreateEssayRequest;
 import com.example.demo.domain.essay.presentation.dto.request.UpdateEssayRequest;
+import com.example.demo.domain.essay.presentation.dto.response.EssayBriefInfoDto;
 import com.example.demo.domain.essay.presentation.dto.response.EssayCommentInfoDto;
 import com.example.demo.domain.essay.presentation.dto.response.EssayResponse;
 import com.example.demo.domain.essay.service.EssayService;
@@ -47,7 +48,7 @@ public class EssayController {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size) {
 
-        PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.DESC,"createdDate");
+        PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.DESC,"createdAt");
         return essayService.findAllEssay(pageRequest);
     }
 
@@ -101,6 +102,17 @@ public class EssayController {
     @PostMapping("/draft")
     public EssayResponse createDraftEssay(@RequestBody CreateEssayRequest createEssayRequest) {
         return essayService.createEssayDraft(createEssayRequest);
+    }
+
+    @GetMapping("/search")
+    public Slice<EssayResponse> searchEssay(
+            @RequestParam(value = "word") String word,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        return essayService.search(word,pageRequest);
     }
 
 }

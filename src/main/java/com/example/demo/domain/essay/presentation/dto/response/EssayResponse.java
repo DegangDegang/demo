@@ -9,6 +9,8 @@ public class EssayResponse {
 
     private Long essayId;
 
+    private String sentence;
+
     private String title;
 
     private String content;
@@ -30,6 +32,7 @@ public class EssayResponse {
     public EssayResponse(EssayInfoVO essayInfoVO, boolean iHost, int likeCnt, int commentCnt, boolean checkLike) {
 
         essayId = essayInfoVO.getEssayId();
+        sentence = essayInfoVO.getSentence();
         title = essayInfoVO.getTitle();
         content = essayInfoVO.getContent();
         likeCount = likeCnt;
