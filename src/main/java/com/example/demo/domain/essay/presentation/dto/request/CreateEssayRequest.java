@@ -8,6 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CreateEssayRequest {
 
+    private String sentence;
+
     private String title;
 
     private String content;

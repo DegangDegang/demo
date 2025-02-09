@@ -1,6 +1,7 @@
 package com.example.demo.domain.essay.domain;
 
 import com.example.demo.domain.essay.domain.vo.EssayInfoVO;
+import com.example.demo.domain.essay.exception.EssayNotFoundException;
 import com.example.demo.domain.essay.exception.NotEssayHostException;
 import com.example.demo.domain.essay.service.dto.UpdateEssayDto;
 import com.example.demo.domain.user.domain.User;
@@ -40,6 +41,7 @@ public class Essay extends BaseEntity {
     @Column(length = 5000)
     private String content;
 
+    @Column(name = "is_draft")
     private Boolean isDraft;
 
     private String sentence;
@@ -92,6 +94,12 @@ public class Essay extends BaseEntity {
 
     public int getCommentNum() {
         return essayComments.size();
+    }
+
+    public void validDraft() {
+        if (isDraft) {
+            throw EssayNotFoundException.EXCEPTION;
+        }
     }
 
 

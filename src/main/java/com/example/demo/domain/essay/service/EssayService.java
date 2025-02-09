@@ -10,23 +10,18 @@ import com.example.demo.domain.essay.exception.*;
 import com.example.demo.domain.essay.presentation.dto.request.CreateEssayCommentRequest;
 import com.example.demo.domain.essay.presentation.dto.request.CreateEssayRequest;
 import com.example.demo.domain.essay.presentation.dto.request.UpdateEssayRequest;
-import com.example.demo.domain.essay.presentation.dto.response.EssayBriefInfoDto;
 import com.example.demo.domain.essay.presentation.dto.response.EssayCommentInfoDto;
 import com.example.demo.domain.essay.presentation.dto.response.EssayResponse;
-import com.example.demo.domain.essay.service.dto.UpdateEssayDto;
 import com.example.demo.domain.user.domain.User;
 import com.example.demo.global.utils.security.SecurityUtils;
 import com.example.demo.global.utils.user.UserUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @Slf4j
@@ -78,6 +73,8 @@ public class EssayService {
 
         Essay essay = queryEssay(essayId);
 
+        essay.validDraft();
+
         return getEssayResponse(essay,currentUserId);
     }
 
@@ -126,7 +123,7 @@ public class EssayService {
 
         Long currentUserId = securityUtils.getCurrentUserId();
 
-        Slice<Essay> sliceReservation = essayRepository.findSliceByOrderByLastModifyAtDesc(pageRequest);
+        Slice<Essay> sliceReservation = essayRepository.findByIsDraftFalseOrderByLastModifyAtDesc(pageRequest);
 
         return sliceReservation.map(
                 essay -> getEssayResponse(essay,currentUserId));
@@ -145,7 +142,10 @@ public class EssayService {
     @Transactional
     public EssayResponse likeEssay(Long essayId) {
         User user = userUtils.getUserFromSecurityContext();
+
         Essay essay = queryEssay(essayId);
+
+        essay.validDraft();
 
         if (essayLikeRepository.existsByEssayAndUser(essay, user)) {
             throw EssayLikeAlreadyExistsException.EXCEPTION;
@@ -162,6 +162,8 @@ public class EssayService {
     public EssayResponse unlikeEssay(Long essayId) {
         User user = userUtils.getUserFromSecurityContext();
         Essay essay = queryEssay(essayId);
+
+        essay.validDraft();
 
         if (!essayLikeRepository.existsByEssayAndUser(essay, user)) {
             throw EssayLikeNotFoundException.EXCEPTION;
@@ -191,6 +193,8 @@ public class EssayService {
 
         Essay essay = queryEssay(essayId);
 
+        essay.validDraft();
+
         EssayComment essayComment = makeEssayComment(user, essay, createEssayCommentRequest.getContent());
 
         essayCommentRepository.save(essayComment);
@@ -208,12 +212,22 @@ public class EssayService {
         essayCommentRepository.delete(essayComment);
     }
 
+    public Slice<EssayResponse> search(String word, Pageable pageable){
+
+        Long currentUserId = securityUtils.getCurrentUserId();
+
+        Slice<Essay> essays = essayRepository.searchEssays(word, pageable);
+
+        return essays.map(essay -> getEssayResponse(essay,currentUserId));
+    }
+
 
 
     private Essay makeEssay(CreateEssayRequest createEssayRequest,User user){
 
         return Essay.builder()
                 .user(user)
+                .sentence(createEssayRequest.getSentence())
                 .title(createEssayRequest.getTitle())
                 .content(createEssayRequest.getContent())
                 .isDraft(false)
@@ -224,6 +238,7 @@ public class EssayService {
 
         return Essay.builder()
                 .user(user)
+                .sentence(createEssayRequest.getSentence())
                 .title(createEssayRequest.getTitle())
                 .content(createEssayRequest.getContent())
                 .isDraft(true)

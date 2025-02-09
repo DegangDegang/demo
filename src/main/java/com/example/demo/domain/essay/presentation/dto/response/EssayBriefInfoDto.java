@@ -7,12 +7,14 @@ import lombok.Getter;
 public class EssayBriefInfoDto {
 
     private Long essayId;
+    private String sentence;
     private String title;
     private String content;
     private HostInfoDto hostInfo;
 
     public EssayBriefInfoDto(EssayInfoVO essayInfoVO) {
         essayId = essayInfoVO.getEssayId();
+        sentence = essayInfoVO.getSentence();
         title = essayInfoVO.getTitle();
         content = essayInfoVO.getContent();
         hostInfo = new HostInfoDto(essayInfoVO.getHostInfoVO());

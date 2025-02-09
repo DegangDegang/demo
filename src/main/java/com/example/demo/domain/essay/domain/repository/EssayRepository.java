@@ -12,10 +12,19 @@ import java.util.Optional;
 
 public interface EssayRepository extends JpaRepository<Essay,Long> {
 
-    Slice<Essay> findSliceByOrderByLastModifyAtDesc(Pageable pageable);
+    Slice<Essay> findByIsDraftFalseOrderByLastModifyAtDesc(Pageable pageable);
+
+    //Slice<Essay> findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCaseAndIsDraftFalse(String word, Pageable pageable);
+
+    @Query("SELECT e FROM Essay e " +
+            "JOIN FETCH e.user u " +  // FETCH JOIN 사용
+            "WHERE (LOWER(e.title) LIKE LOWER(CONCAT('%', :word, '%')) " +
+            "OR LOWER(u.nickname) LIKE LOWER(CONCAT('%', :word, '%'))) " +
+            "AND e.isDraft = false")
+    Slice<Essay> searchEssays(@Param("word") String word, Pageable pageable);
 
     @Query("select e from Essay e" +
-            " where e.user.id = :userId order by e.lastModifyAt desc")
+            " where e.user.id = :userId and e.isDraft = false order by e.lastModifyAt desc")
     Slice<Essay> findAllMyEssay(@Param("userId") Long userId, Pageable pageable);
 
     @Query("select e from Essay e" +
