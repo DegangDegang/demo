@@ -27,6 +27,11 @@ public class StompHandler implements ChannelInterceptor {
 
         log.info("accessor : {}", accessor);
 
-        return ChannelInterceptor.super.preSend(message, channel);
+        if (StompCommand.CONNECT == accessor.getCommand()) {
+
+            log.info("==========연결 완료=========={}","test");
+        }
+
+        return message;
     }
 }

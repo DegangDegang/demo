@@ -123,6 +123,7 @@ public class CredentialService {
                         .oauthProvider(oauthProvider.getValue())
                         .oauthId(oidcDecodePayload.getSub())
                         .nickname(registerUserRequest.getNickname())
+                        .profileImgUrl(null)
                         .build();
         userRepository.save(user);
 

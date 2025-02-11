@@ -38,15 +38,13 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests((registry) ->
-                        registry.requestMatchers("/api/v1/credentials/login2/**","/api/v1/credentials/singup2",
+                        registry.requestMatchers("/api/v1/credentials/test-login/**","/api/v1/credentials/sign-up-test",
                                         "/api/v1/credentials/oauth/link/kakao","/api/v1/credentials/oauth/kakao","/api/v1/credentials/oauth/link/google"
                                         ,"/api/v1/credentials/oauth/google","/api/v1/credentials/oauth/valid/register","/api/v1/credentials/login"
-                                        ,"/api/v1/credentials/refresh").permitAll()
+                                        ,"/api/v1/credentials/refresh","/stomp/chat").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/api/v1/credentials").permitAll()
-                                .requestMatchers("/api/v1/winning/pension/lottery/admin/save/db",
-                                        "/api/v1/winning/lottery/admin/save/db").hasRole(AccountRole.ADMIN.getValue())
-                                .anyRequest().permitAll()
+                                //.requestMatchers(HttpMethod.POST,"/api/v1/credentials/").permitAll()
+                                .anyRequest().authenticated()
                 );
 
 

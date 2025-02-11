@@ -24,11 +24,11 @@ public class WebSocketStompBrokerConfig implements WebSocketMessageBrokerConfigu
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
-                .addEndpoint("/chat")
+                .addEndpoint("stomp/chat")
                 .setAllowedOrigins("*");
 
         registry
-                .addEndpoint("/chat")
+                .addEndpoint("stomp/chat")
                 .setAllowedOrigins("*")
                 .withSockJS();
     }
