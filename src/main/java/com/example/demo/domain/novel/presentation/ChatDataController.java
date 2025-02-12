@@ -1,5 +1,6 @@
 package com.example.demo.domain.novel.presentation;
 
+import com.example.demo.domain.novel.presentation.dto.ChatResponse;
 import com.example.demo.domain.novel.service.ChatRedisCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,19 +16,6 @@ import java.time.format.DateTimeFormatter;
 public class ChatDataController {
 
     private final ChatRedisCacheService cacheService;
-
-
-    @PostMapping("/{reservationId}")
-    public ChatResponse getChatting(@PathVariable Long reservationId, @RequestBody(required = false) ChatPagingRequest chatPagingRequest){
-
-        if(chatPagingRequest ==null|| chatPagingRequest.getCursor()==null || chatPagingRequest.getCursor().equals("")){
-            chatPagingRequest = ChatPagingRequest.builder()
-                    .cursor( LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")))
-                    .build();
-        }
-        return cacheService.getChatsFromRedis(reservationId, chatPagingRequest);
-    }
-
 
 
 }
