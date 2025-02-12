@@ -4,6 +4,8 @@ package com.example.demo.domain.novel.presentation;
 
 import com.example.demo.domain.novel.presentation.dto.ChatMessageRequest;
 import com.example.demo.domain.novel.redis.pub.RedisPublisher;
+import com.example.demo.domain.novel.service.ChatRedisCacheService;
+import com.example.demo.domain.novel.service.MessageType;
 import com.example.demo.domain.novel.service.dto.ChatMessageSaveDto;
 import com.example.demo.domain.user.domain.User;
 import com.example.demo.global.utils.user.UserUtils;
@@ -23,16 +25,15 @@ public class ChatController {
 
     private final RedisPublisher redisPublisher;
     private final ChannelTopic channelTopic;
-    private final UserUtils userUtils;
+    private final ChatRedisCacheService chatRedisCacheService;
 
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequest chatMessageRequest){
 
-        //User user = userUtils.getUserFromSecurityContext();
-
+        // 유저 관련 로직
 
         ChatMessageSaveDto message = ChatMessageSaveDto.builder()
-                .type(ChatMessageSaveDto.MessageType.TALK)
+                .type(chatMessageRequest.getMessageType())
                 .message(chatMessageRequest.getMessage())
                 .profilePath("TEST")
                 .roomId(chatMessageRequest.getRoomId())
@@ -42,9 +43,9 @@ public class ChatController {
                 .roomId(chatMessageRequest.getRoomId())
                 .build();
 
-        redisPublisher.publish(channelTopic,message);
-        //chatRedisCacheService.addChat(message);
-    }
 
+        redisPublisher.publish(channelTopic,message);
+        chatRedisCacheService.addChat(message);
+    }
 
 }

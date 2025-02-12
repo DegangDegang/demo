@@ -1,6 +1,7 @@
 package com.example.demo.domain.novel.presentation.dto;
 
 
+import com.example.demo.domain.novel.service.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,5 +12,6 @@ public class ChatMessageRequest {
     private String roomId;
     private String message;
     private String userName;
+    private MessageType messageType;
 
 }

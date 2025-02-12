@@ -1,5 +1,6 @@
 package com.example.demo.domain.novel.service.dto;
 
+import com.example.demo.domain.novel.service.MessageType;
 import lombok.*;
 import java.util.List;
 
@@ -10,10 +11,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatMessageSaveDto {
 
-    public enum MessageType{
-        ENTER,TALK,QUIT
-    }
-
     private Long userId;
     private String roomId;
     private MessageType type;
@@ -22,5 +19,14 @@ public class ChatMessageSaveDto {
     private String message;
     private String createdAt;
 
-
+    public static ChatMessageSaveDto createChatMessageSaveDto(ChatMessageSaveDto saveDto){
+        return ChatMessageSaveDto.builder()
+                .type(MessageType.CHAT)
+                .userId(saveDto.getUserId())
+                .roomId(saveDto.getRoomId())
+                .writer(saveDto.getWriter())
+                .createdAt(saveDto.getCreatedAt())
+                .message(saveDto.getMessage())
+                .build();
+    }
 }
