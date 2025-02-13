@@ -119,11 +119,16 @@ public class EssayService {
         return getEssayResponse(essay,currentUserId);
     }
 
-    public Slice<EssayResponse> findAllEssay(PageRequest pageRequest) {
+    public Slice<EssayResponse> findAllEssay(PageRequest pageRequest, String sortBy) {
 
         Long currentUserId = securityUtils.getCurrentUserId();
+        Slice<Essay> sliceReservation;
 
-        Slice<Essay> sliceReservation = essayRepository.findByIsDraftFalseOrderByLastModifyAtDesc(pageRequest);
+        if ("likes".equals(sortBy)) {
+            sliceReservation = essayRepository.findAllSortedByLikes(pageRequest);
+        } else {
+            sliceReservation = essayRepository.findByIsDraftFalseOrderByLastModifyAtDesc(pageRequest);
+        }
 
         return sliceReservation.map(
                 essay -> getEssayResponse(essay,currentUserId));

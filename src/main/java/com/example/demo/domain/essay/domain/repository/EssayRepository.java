@@ -14,6 +14,7 @@ public interface EssayRepository extends JpaRepository<Essay,Long> {
 
     Slice<Essay> findByIsDraftFalseOrderByLastModifyAtDesc(Pageable pageable);
 
+
     //Slice<Essay> findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCaseAndIsDraftFalse(String word, Pageable pageable);
 
     @Query("SELECT e FROM Essay e " +
@@ -30,5 +31,11 @@ public interface EssayRepository extends JpaRepository<Essay,Long> {
     @Query("select e from Essay e" +
             " where e.user.id = :userId and e.isDraft = true")
     Optional<Essay> findDraftByUser(@Param("userId") Long userId);
+
+    @Query("SELECT e FROM Essay e " +
+            "WHERE e.isDraft = false " +
+            "ORDER BY SIZE(e.essayLikes) DESC, e.lastModifyAt DESC")
+    Slice<Essay> findAllSortedByLikes(Pageable pageable);
+
 
 }

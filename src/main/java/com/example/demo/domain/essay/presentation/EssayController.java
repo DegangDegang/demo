@@ -46,11 +46,13 @@ public class EssayController {
     @GetMapping
     public Slice<EssayResponse> getEssays(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestParam(value = "sortBy", defaultValue = "latest") String sortBy) {
 
-        PageRequest pageRequest = PageRequest.of(page,size, Sort.Direction.DESC,"createdAt");
-        return essayService.findAllEssay(pageRequest);
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return essayService.findAllEssay(pageRequest, sortBy);
     }
+
 
     @GetMapping("/my")
     public Slice<EssayResponse> getMyEssays(
@@ -106,9 +108,9 @@ public class EssayController {
 
     @GetMapping("/search")
     public Slice<EssayResponse> searchEssay(
-            @RequestParam(value = "word") String word,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "size", defaultValue = "10") Integer size) {
+            @RequestParam(value = "size", defaultValue = "10") Integer size,
+            @RequestParam(value = "word") String word) {
 
         PageRequest pageRequest = PageRequest.of(page, size);
 
