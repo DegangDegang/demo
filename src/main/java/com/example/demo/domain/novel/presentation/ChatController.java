@@ -30,22 +30,29 @@ public class ChatController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequest chatMessageRequest){
 
-        // 유저 관련 로직
+        ChatMessageSaveDto message = getChatMessageSaveDto(chatMessageRequest);
 
-        ChatMessageSaveDto message = ChatMessageSaveDto.builder()
+        if (message.getType() ==  MessageType.CHAT) {
+            chatRedisCacheService.addChat(message);
+        }else {
+            chatRedisCacheService.addWrite(message);
+        }
+
+        redisPublisher.publish(channelTopic,message);
+
+    }
+
+    private static ChatMessageSaveDto getChatMessageSaveDto(ChatMessageRequest chatMessageRequest) {
+        return ChatMessageSaveDto.builder()
                 .type(chatMessageRequest.getMessageType())
                 .message(chatMessageRequest.getMessage())
-                .profilePath("TEST")
                 .roomId(chatMessageRequest.getRoomId())
                 .writer(chatMessageRequest.getUserName())
                 .createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")))
                 .userId(1L)
-                .roomId(chatMessageRequest.getRoomId())
                 .build();
 
-
-        redisPublisher.publish(channelTopic,message);
-        chatRedisCacheService.addChat(message);
     }
+
 
 }

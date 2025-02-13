@@ -41,10 +41,10 @@ public class SecurityConfig {
                         registry.requestMatchers("/api/v1/credentials/test-login/**","/api/v1/credentials/sign-up-test",
                                         "/api/v1/credentials/oauth/link/kakao","/api/v1/credentials/oauth/kakao","/api/v1/credentials/oauth/link/google"
                                         ,"/api/v1/credentials/oauth/google","/api/v1/credentials/oauth/valid/register","/api/v1/credentials/login"
-                                        ,"/api/v1/credentials/refresh","/stomp/chat").permitAll()
+                                        ,"/api/v1/credentials/refresh","/stomp/chat","/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 //.requestMatchers(HttpMethod.POST,"/api/v1/credentials/").permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 );
 
 

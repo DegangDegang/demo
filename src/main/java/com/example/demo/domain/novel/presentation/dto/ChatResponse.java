@@ -1,37 +1,20 @@
 package com.example.demo.domain.novel.presentation.dto;
 
 import com.example.demo.domain.essay.presentation.dto.response.HostInfoDto;
+import com.example.demo.domain.novel.service.dto.ChatMessageSaveDto;
 import lombok.Getter;
 import java.util.List;
 
 @Getter
 public class ChatResponse {
 
-    private Long myParticipationId;
+    private String content;
 
-    private Long reservationId;
+    private List<ChatMessageSaveDto> messages;
 
-    private Integer passengerNum;
 
-    private Integer currentNum;
-
-    private HostInfoDto hostInfo;
-
-    private Boolean iHost;
-
-    private List<ChatHistoryDto> chatHistoryDtoList;
-
-    public ChatResponse(Long ParticipationId, ReservationBaseInfoVo reservationBaseInfoVo, UserInfoVO userInfoVO, boolean iHost, List<ChatHistoryDto> ChatHistoryDtoList) {
-
-        myParticipationId = ParticipationId;
-        reservationId = reservationBaseInfoVo.getReservationId();
-        passengerNum = reservationBaseInfoVo.getPassengerNum();
-        currentNum = reservationBaseInfoVo.getCurrentNum();
-        hostInfo = new HostInfoDto(userInfoVO);
-        this.iHost = iHost;
-        chatHistoryDtoList = ChatHistoryDtoList;
-
+    public ChatResponse(String content, List<ChatMessageSaveDto> messages) {
+        this.content = content;
+        this.messages = messages;
     }
-
-
 }
