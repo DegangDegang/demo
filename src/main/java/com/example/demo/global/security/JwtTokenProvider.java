@@ -56,6 +56,17 @@ public class JwtTokenProvider {
         return null;
     }
 
+    // 웹소켓 안에서
+    public String resolveTokenWeb(String token) {
+
+        if (token != null
+                && token.length() > jwtProperties.getPrefix().length()
+                && token.startsWith(jwtProperties.getPrefix())) {
+            return token.substring(jwtProperties.getPrefix().length() + 1);
+        }
+        return null;
+    }
+
     public Authentication getAuthentication(String token) {
         String id = getJws(token).getBody().getSubject();
         String role = (String) getJws(token).getBody().get(ROLE);
@@ -110,6 +121,26 @@ public class JwtTokenProvider {
             throw InvalidTokenException.EXCEPTION;
         }
     }
+
+    //웹소켓에서
+    public void validateToken(final String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            throw InvalidTokenException.EXCEPTION;
+        } catch (ExpiredJwtException e) {
+            throw ExpiredTokenException.EXCEPTION;
+        } catch (UnsupportedJwtException e) {
+            throw InvalidTokenException.EXCEPTION;
+        } catch (IllegalArgumentException e) {
+            throw InvalidTokenException.EXCEPTION;
+        }
+    }
+
+    public Long getUserId(String token){
+        return Long.valueOf(getJws(token).getBody().getSubject());
+    }
+
 
     private String createAccessToken(
             Long id, Date issuedAt, Date accessTokenExpiresIn, AccountRole accountRole) {

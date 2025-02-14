@@ -11,7 +11,6 @@ public class ChatMessageRequest {
 
     private String roomId;
     private String message;
-    private String userName;
     private MessageType messageType;
 
 }

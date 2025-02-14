@@ -1,10 +1,11 @@
 package com.example.demo.domain.novel.service;
 
-
 import com.example.demo.domain.novel.presentation.dto.ChatMessageRequest;
 import com.example.demo.domain.novel.presentation.dto.ChatResponse;
 import com.example.demo.domain.novel.redis.pub.RedisPublisher;
 import com.example.demo.domain.novel.service.dto.ChatMessageSaveDto;
+import com.example.demo.global.security.JwtTokenProvider;
+import com.example.demo.global.utils.security.SecurityUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -34,28 +33,34 @@ public class ChatRedisCacheService {
     public static final String NEW_CHAT = "NEW_CHAT";
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
-    private final RedisTemplate<String, String> roomRedisTemplate;
     private ZSetOperations<String, ChatMessageSaveDto> zSetOperations;
-
     private final RedisPublisher redisPublisher;
     private final ChannelTopic channelTopic;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostConstruct
     private void init() {
         zSetOperations = chatRedisTemplate.opsForZSet();
     }
 
-    public void publish(ChatMessageRequest chatMessageRequest) {
+    public void publish(String token, ChatMessageRequest chatMessageRequest) {
 
-        ChatMessageSaveDto message = makeMessageDto(chatMessageRequest,1L);
+        String accessToken = jwtTokenProvider.resolveTokenWeb(token);
+
+        jwtTokenProvider.validateToken(accessToken);
+
+        Long currentUserId = jwtTokenProvider.getUserId(accessToken);
+        log.info("userId=={}", currentUserId);
+
+        ChatMessageSaveDto message = makeMessageDto(chatMessageRequest,currentUserId);
+
+        redisPublisher.publish(channelTopic,message);
 
         if (chatMessageRequest.getMessageType() == MessageType.CHAT) {
             addChat(message);
         }else {
             addWrite(message);
         }
-
-        redisPublisher.publish(channelTopic,message);
 
     }
 
@@ -98,7 +103,7 @@ public class ChatRedisCacheService {
                 .type(chatMessageRequest.getMessageType())
                 .message(chatMessageRequest.getMessage())
                 .userId(userId)
-                // .createdAt(String.valueOf(LocalDateTime.now()))
+                //.createdAt(String.valueOf(LocalDateTime.now()))
                 .createdAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")))
                 .build();
     }

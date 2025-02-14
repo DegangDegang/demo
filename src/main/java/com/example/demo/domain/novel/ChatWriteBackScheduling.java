@@ -27,12 +27,14 @@ public class ChatWriteBackScheduling {
     private final UserUtils userUtils;
     private final NovelRepository novelRepository;
 
-    @Scheduled(cron = "0 * * * * *")
+
+    //@Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "5,15,25,35,45,55 * * * * *")
     @Transactional
     public void writeBack() {
         log.info("------Scheduling start------");
 
-        // Redis의 Sorted Set에서 데이터를 읽어옵니다.
+
         BoundZSetOperations<String, ChatMessageSaveDto> setOperations = chatRedisTemplate.boundZSetOps("NEW_CHAT");
         ScanOptions scanOptions = ScanOptions.scanOptions().build();
 
@@ -40,8 +42,6 @@ public class ChatWriteBackScheduling {
         try (Cursor<ZSetOperations.TypedTuple<ChatMessageSaveDto>> cursor = setOperations.scan(scanOptions)) {
             while (cursor.hasNext()) {
                 ZSetOperations.TypedTuple<ChatMessageSaveDto> chatMessageDto = cursor.next();
-
-                // TypedTuple에서 ChatMessageSaveDto를 추출합니다.
                 ChatMessageSaveDto chatMessage = chatMessageDto.getValue();
                 chatList.add(chatMessage);
             }
